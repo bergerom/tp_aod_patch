@@ -1,7 +1,7 @@
 CC=gcc
 LATEXC=pdflatex
 DOCC=doxygen
-CFLAGS=-g -Wall 
+CFLAGS=-g -Wall
 
 REFDIR=.
 SRCDIR=$(REFDIR)/src
@@ -14,26 +14,27 @@ CSOURCE=$(wildcard $(SRCDIR)/applyPatch.c)
 PDF=$(LATEXSOURCE:.tex=.pdf)
 
 
-all: binary report doc 
+all: binary report doc
 
 
 $(BINDIR)/applyPatch: $(CSOURCE)
+	mkdir -p $(BINDIR)
 	$(CC) $(CFLAGS)  $^ -o $@
 
 %.pdf: $(LATEXSOURCE)
-	$(LATEXC) -output-directory $(REPORTDIR) $^ 
+	$(LATEXC) -output-directory $(REPORTDIR) $^
 
-$(DOCDIR)/index.html: $(SRCDIR)/Doxyfile $(CSOURCE) 
+$(DOCDIR)/index.html: $(SRCDIR)/Doxyfile $(CSOURCE)
 	$(DOCC) $(SRCDIR)/Doxyfile
 
 binary: $(BINDIR)/applyPatch
 
-report: $(PDF) 
+report: $(PDF)
 
 doc: $(DOCDIR)/index.html
 
 clean:
-	rm -rf $(DOCDIR) $(BINDIR)/* $(REPORTDIR)/*.aux $(REPORTDIR)/*.log  $(REPORTDIR)/rapport.pdf 
+	rm -rf $(DOCDIR) $(BINDIR)/* $(REPORTDIR)/*.aux $(REPORTDIR)/*.log  $(REPORTDIR)/rapport.pdf
 
 
-.PHONY: all doc binary report 
+.PHONY: all doc binary report
