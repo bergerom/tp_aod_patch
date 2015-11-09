@@ -3,10 +3,10 @@ from abc import ABCMeta, abstractmethod
 # Classe abstraite Parent
 
 class PatchAtom:
-    cost = 0
-    line_number = 0
 
     def __init__(self, line_nb):
+        self.cost = 0
+        self.line_number = 0
         self.line_number = line_nb
 
     @abstractmethod
@@ -16,7 +16,6 @@ class PatchAtom:
 # Classes héritant de PatchAtom
 
 class AdditionAtom(PatchAtom):
-    new_line = "Nouvelle ligne"
 
     def __init__(self, line_nb, new_line):
         super().__init__(line_nb)
@@ -29,7 +28,6 @@ class AdditionAtom(PatchAtom):
         return 11 + len(self.new_line)
 
 class SubstituteAtom(PatchAtom):
-    subs_line = "Nouvelle ligne"
 
     def __init__(self, line_nb, subs_line):
         super().__init__(line_nb)
@@ -43,6 +41,7 @@ class SubstituteAtom(PatchAtom):
 
 
 class DestructionAtom(PatchAtom):
+
     def __str__(self):
         return "d {}\n".format(self.line_number)
 
@@ -50,7 +49,6 @@ class DestructionAtom(PatchAtom):
         return 10
 
 class DestructionMultAtom(PatchAtom):
-    destruction_nb = 1  # Nombre de lignes à détruire
 
     def __init__(self, line_nb, destruction_nb):
         super().__init__(line_nb)

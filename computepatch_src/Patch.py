@@ -1,7 +1,10 @@
 
 class Patch:
-    atom_list = []  # Liste des instructions du patch
-    cost = 0
+
+    def __init__(self):
+        self.atom_list = []
+        self.cost = 0
+        super().__init__()
 
     def __str__(self):
         s = ""
@@ -13,5 +16,3 @@ class Patch:
     def add_atom(self, atom):
         self.atom_list.append(atom)
         self.cost += atom.compute_cost()
-
-
