@@ -4,7 +4,7 @@ DOCC=doxygen
 CFLAGS=-g -Wall
 
 REFDIR=.
-SRCDIR=$(REFDIR)/src
+SRCDIR=$(REFDIR)/applypatch_src
 BINDIR=$(REFDIR)/bin
 DOCDIR=$(REFDIR)/doc
 REPORTDIR=$(REFDIR)/rapport
