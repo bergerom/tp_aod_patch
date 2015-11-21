@@ -40,22 +40,25 @@ class TabPatch:
         # Calcul du patch (i,j)
         if min_cost == s_cost:
             line = self.file_after_patch[j-1]
-            patch = self.memo_prec[j - 1].copy_and_add(SubstituteAtom(j, line))
+            patch = self.memo_prec[j - 1].copy_and_add(SubstituteAtom(i, line))
         elif min_cost == d_cost:
-            patch = self.memo_prec[j].copy_and_add(DestructionAtom(j))
+            patch = self.memo_prec[j].copy_and_add(DestructionAtom(i))
         elif min_cost == md_cost:
             line_nb = self.memo_min[j-1].lines_out
-            nb_del = i - line_nb
-            patch = self.memo_min[j - 1].copy_and_add(DestructionMultAtom(line_nb, nb_del))
+            nb_del = i - line_nb - 1 # nombre de suppressions
+            patch = self.memo_min[j].copy_and_add(DestructionMultAtom(line_nb + 1, nb_del))
         elif min_cost == a_cost:
             line = self.file_after_patch[j-1]
-            patch = self.memo_cur[j - 1].copy_and_add(AdditionAtom(j, line))
+            patch = self.memo_cur[j - 1].copy_and_add(AdditionAtom(j-1, line))
         else:
             patch = self.memo_prec[j - 1].copy()
 
         # Ajout du patch (i,j) dans la liste
         self.memo_cur.append(patch)
         # Mise à jour de la liste des minimum
+        print("({},{})".format(i, j))
+        print(patch)
+        print("-------------------")
         self.update_memo_min(patch, i)
 
     # Met à jour le cout minimum de chaque colonne
@@ -68,19 +71,19 @@ class TabPatch:
             return self.memo_prec[self.nb_line_n2]
         elif self.nb_line_n2 == 0:
             if self.nb_line_n1 == 1:
-                return Patch(DestructionAtom(0))
+                return Patch(DestructionAtom(1))
             else:
-                return Patch(DestructionMultAtom(0, self.nb_line_n2))
+                return Patch(DestructionMultAtom(1, self.nb_line_n2))
 
-        for i in range(1, self.nb_line_n1):
+        for i in range(1, self.nb_line_n1 + 1):
 
             self.memo_cur = []
             if i == 1:
-                self.memo_cur.append(Patch(DestructionAtom(i)))
+                self.memo_cur.append(Patch(DestructionAtom(0)))
             else:
-                self.memo_cur.append(Patch(DestructionMultAtom(i, self.nb_line_n1)))
+                self.memo_cur.append(Patch(DestructionMultAtom(0, i)))
 
-            for j in range(1, self.nb_line_n2):
+            for j in range(1, self.nb_line_n2 + 1):
 
                 if self.file_before_patch[i-1] == self.file_after_patch[j-1]:
                     identity_cost = self.memo_prec[j - 1].cost
@@ -101,7 +104,9 @@ class TabPatch:
                                       i,
                                       j)
 
-        return self.memo_cur[self.nb_line_n2 - 1]
+            self.memo_prec = self.memo_cur.copy()
+
+        return self.memo_prec[self.nb_line_n2]
 
 
 # Creation des conditions initiales a partir du ficher

@@ -54,7 +54,7 @@ class DestructionAtom(PatchAtom):
         return 1, 0
 
     def __str__(self):
-        return "d {}".format(self.line_number)
+        return "d {}\n".format(self.line_number)
 
     def compute_cost(self):
         return 10
@@ -69,7 +69,7 @@ class DestructionMultAtom(PatchAtom):
         self.destruction_nb = destruction_nb
 
     def __str__(self):
-        return "D {} {}".format(self.line_number, self.destruction_nb)
+        return "D {} {}\n".format(self.line_number, self.destruction_nb)
 
     def compute_cost(self):
         return 15
