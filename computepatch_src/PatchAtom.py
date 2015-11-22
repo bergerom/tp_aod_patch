@@ -19,6 +19,19 @@ class PatchAtom:
 
 # Classes héritant de PatchAtom
 
+class IdentityAtom(PatchAtom):
+    def update_line_nb(self):
+        return 1, 1
+
+    def __init__(self, line_nb):
+        super().__init__(line_nb)
+
+    def __str__(self):
+        return ""
+
+    def compute_cost(self):
+        return 0
+
 class AdditionAtom(PatchAtom):
     def update_line_nb(self):
         return 0, 1
@@ -31,7 +44,7 @@ class AdditionAtom(PatchAtom):
         return "+ {}\n{}".format(self.line_number, self.new_line)
 
     def compute_cost(self):
-        return 11 + len(self.new_line)
+        return 10 + len(self.new_line)
 
 
 class SubstituteAtom(PatchAtom):
@@ -46,7 +59,7 @@ class SubstituteAtom(PatchAtom):
         return "= {}\n{}".format(self.line_number, self.subs_line)
 
     def compute_cost(self):
-        return 11 + len(self.subs_line)
+        return 10 + len(self.subs_line)
 
 
 class DestructionAtom(PatchAtom):
@@ -54,7 +67,7 @@ class DestructionAtom(PatchAtom):
         return 1, 0
 
     def __str__(self):
-        return "d {}\n".format(self.line_number)
+        return "d {}".format(self.line_number)
 
     def compute_cost(self):
         return 10
@@ -69,7 +82,7 @@ class DestructionMultAtom(PatchAtom):
         self.destruction_nb = destruction_nb
 
     def __str__(self):
-        return "D {} {}\n".format(self.line_number, self.destruction_nb)
+        return "D {} {}".format(self.line_number, self.destruction_nb)
 
     def compute_cost(self):
         return 15

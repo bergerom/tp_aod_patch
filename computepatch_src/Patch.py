@@ -13,10 +13,7 @@ class Patch:
             self.add_atom(patch_atom)
 
     def __str__(self):
-        s = ""
-        for a in self.atom_list:
-            s += str(a)
-        return s
+        return "\n".join(str(atom) for atom in self.atom_list if not isinstance(atom, IdentityAtom))
 
     # Retourne une copie du patch
     def copy(self):

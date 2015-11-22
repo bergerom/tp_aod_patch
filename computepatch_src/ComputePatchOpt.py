@@ -19,7 +19,7 @@ class TabPatch:
             self.memo_min = []
             p = Patch()
             p.cost = 1000000
-            for line in range(0, self.nb_line_n2 + 1):
+            for line in range(0, max(self.nb_line_n1, self.nb_line_n2) + 1):
                 self.memo_min.append(p)
 
             self.memo_cur = []
@@ -38,7 +38,9 @@ class TabPatch:
     def min_and_add_atom(self, id_cost, s_cost, d_cost, md_cost, a_cost, i, j):
         min_cost = min(id_cost, s_cost, d_cost, md_cost, a_cost)
         # Calcul du patch (i,j)
-        if min_cost == s_cost:
+        if min_cost == id_cost:
+            patch = self.memo_prec[j - 1].copy_and_add(IdentityAtom(i))
+        elif min_cost == s_cost:
             line = self.file_after_patch[j-1]
             patch = self.memo_prec[j - 1].copy_and_add(SubstituteAtom(i, line))
         elif min_cost == d_cost:
@@ -51,7 +53,7 @@ class TabPatch:
             line = self.file_after_patch[j-1]
             patch = self.memo_cur[j - 1].copy_and_add(AdditionAtom(j-1, line))
         else:
-            patch = self.memo_prec[j - 1].copy()
+            assert(False)
 
         # Ajout du patch (i,j) dans la liste
         self.memo_cur.append(patch)
@@ -73,7 +75,7 @@ class TabPatch:
             if self.nb_line_n1 == 1:
                 return Patch(DestructionAtom(1))
             else:
-                return Patch(DestructionMultAtom(1, self.nb_line_n2))
+                return Patch(DestructionMultAtom(1, self.nb_line_n1))
 
         for i in range(1, self.nb_line_n1 + 1):
 
@@ -90,10 +92,10 @@ class TabPatch:
                 else:
                     identity_cost = 1000000
 
-                sub_cost = self.memo_prec[j - 1].cost + 11 + len(self.file_after_patch[j-1])
+                sub_cost = self.memo_prec[j - 1].cost + 10 + len(self.file_after_patch[j-1])
                 simple_del_cost = self.memo_prec[j].cost + 10
                 mult_del_cost = self.memo_min[j].cost + 15
-                add_cost = self.memo_cur[j - 1].cost + 11 + len(self.file_after_patch[j-1])
+                add_cost = self.memo_cur[j - 1].cost + 10 + len(self.file_after_patch[j-1])
 
                 # Calcul du minimum et sauvegarde dans le tableau
                 self.min_and_add_atom(identity_cost,
