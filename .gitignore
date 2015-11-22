@@ -5,3 +5,4 @@ bin
 doc
 computepatch_src/.idea
 computepatch_src/patchFiles/*
+__pycache__
