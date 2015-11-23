@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 # Classe qui calcule le patch de cout minimal
 # Utilisation : python ComputePatchOpt fichier1 fichier2
 import os
@@ -136,8 +138,12 @@ class TabPatch:
 
         return self.memo_prec[self.nb_line_n2]
 
-# Lecture des paramêtres en entrée et ouverture des fichiers
-if len(sys.argv) == 3:
+if __name__ == '__main__': # permet d'importer le fichier sans exécuter ce qui suit
+    if len(sys.argv) != 3:
+        print('Syntax: %s <source file> <target file>' % sys.argv[0])
+        sys.exit(1)
+
+    # Lecture des paramêtres en entrée et ouverture des fichiers
     f1 = open(sys.argv[1], "r")
     f2 = open(sys.argv[2], "r")
     file_before_patch = f1.readlines()
@@ -146,7 +152,7 @@ if len(sys.argv) == 3:
     # Creation des conditions initiales a partir du ficher
     a = TabPatch(file_before_patch,file_after_patch)
     # Calcul du patch de cout minimum
-    b = a.compute_patch_opt()
+    patch = a.compute_patch_opt()
     # Affichage du cout et du patch
-    print(b.cost)
-    print(b)
+    print(patch.cost, file=sys.stderr) # permet de filtrer la sortie, pour ne conserver que le score ou que le patch
+    print(patch)
