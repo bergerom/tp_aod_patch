@@ -23,9 +23,6 @@ class IdentityAtom(PatchAtom):
     def update_line_nb(self):
         return 1, 1
 
-    def __init__(self, line_nb):
-        super().__init__(line_nb)
-
     def __str__(self):
         return ""
 
@@ -38,6 +35,7 @@ class AdditionAtom(PatchAtom):
 
     def __init__(self, line_nb, new_line):
         super().__init__(line_nb)
+        assert isinstance(new_line, str)
         self.new_line = new_line
 
     def __str__(self):
@@ -53,6 +51,7 @@ class SubstituteAtom(PatchAtom):
 
     def __init__(self, line_nb, subs_line):
         super().__init__(line_nb)
+        assert isinstance(subs_line, str)
         self.subs_line = subs_line
 
     def __str__(self):

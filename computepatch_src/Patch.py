@@ -15,6 +15,10 @@ class Patch:
     def __str__(self):
         return "\n".join(str(atom) for atom in self.atom_list if not isinstance(atom, IdentityAtom))
 
+    def __lt__(self, other):
+        assert(isinstance(other, self.__class__))
+        return self.cost < other.cost
+
     # Retourne une copie du patch
     def copy(self):
         copy_patch = Patch()
