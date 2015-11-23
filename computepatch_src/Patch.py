@@ -20,7 +20,7 @@ class Patch:
     # Retourne une copie du patch
     def copy(self):
         copy_patch = Patch()
-        copy_patch.atom_list = self.atom_list # copie de la liste, mais avec contenu partagé
+        copy_patch.atom_list = list(self.atom_list) # copie de la liste, mais avec contenu partagé
         copy_patch.cost = self.cost
         copy_patch.lines_in = self.lines_in
         copy_patch.lines_out = self.lines_out
