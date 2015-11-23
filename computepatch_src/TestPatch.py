@@ -17,5 +17,7 @@ class TestPatch(unittest.TestCase):
         atom = SubstituteAtom(9, 'bar')
         patch2.add_atom(atom)
         self.assertNotEqual(patch, patch2)
+        self.assertEqual(3, len(patch.atom_list))
+        self.assertEqual(4, len(patch2.atom_list))
         patch.add_atom(atom)
         self.assertEqual(patch, patch2)
