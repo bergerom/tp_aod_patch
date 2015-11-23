@@ -5,7 +5,21 @@ from PatchAtom import *
 from Patch import *
 import sys
 
-INFINITY = 1000000
+class Infinity:
+    def __lt__(self, other):
+        return False
+    def __le__(self, other):
+        return False
+    def __gt__(self, other):
+        return True
+    def __ge__(self, other):
+        return True
+    def __add__(self, other):
+        return self
+    def __radd__(self, other):
+        return self
+
+INFINITY = Infinity()
 
 class TabPatch:
     def __init__(self, file_before_patch, file_after_patch):
