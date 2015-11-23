@@ -23,6 +23,8 @@ class Patch:
         copy_patch = Patch()
         copy_patch.atom_list = copy.copy(self.atom_list)
         copy_patch.cost = copy.copy(self.cost)
+        copy_patch.lines_in = copy.copy(self.lines_in)
+        copy_patch.lines_out = copy.copy(self.lines_out)
         return copy_patch
 
     # Retourne une copie du patch avec une nouvelle instruction

@@ -31,7 +31,7 @@ class AdditionAtom(PatchAtom):
         return "+ {}\n{}".format(self.line_number, self.new_line)
 
     def compute_cost(self):
-        return 11 + len(self.new_line)
+        return 10 + len(self.new_line)
 
 
 class SubstituteAtom(PatchAtom):
@@ -46,7 +46,7 @@ class SubstituteAtom(PatchAtom):
         return "= {}\n{}".format(self.line_number, self.subs_line)
 
     def compute_cost(self):
-        return 11 + len(self.subs_line)
+        return 10 + len(self.subs_line)
 
 
 class DestructionAtom(PatchAtom):
