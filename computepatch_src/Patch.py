@@ -3,7 +3,6 @@ from PatchAtom import *
 
 class Patch:
     def __init__(self, patch_atom=None):
-        super().__init__()
         self.atom_list = []
         self.cost = 0
         self.lines_in = 0
