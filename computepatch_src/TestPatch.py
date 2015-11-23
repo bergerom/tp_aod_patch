@@ -7,4 +7,15 @@ class TestPatch(unittest.TestCase):
         self.fail("Not implemented.") # TODO
 
     def testPatchCopy(self):
-        self.fail("Not implemented.") # TODO
+        patch = Patch()
+        patch.add_atom(AdditionAtom(3, 'xyz'))
+        patch.add_atom(DestructionAtom(6))
+        patch.add_atom(SubstituteAtom(8, 'foo'))
+        patch2 = patch.copy()
+        self.assertIsNot(patch, patch2)
+        self.assertEqual(patch, patch2)
+        atom = SubstituteAtom(9, 'bar')
+        patch2.add_atom(atom)
+        self.assertNotEqual(patch, patch2)
+        patch.add_atom(atom)
+        self.assertEqual(patch, patch2)

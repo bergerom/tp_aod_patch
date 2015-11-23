@@ -16,6 +16,9 @@ class Patch:
             s += str(a)
         return s
 
+    def __eq__(self, other):
+        return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
+
     # Retourne une copie du patch
     def copy(self):
         copy_patch = Patch()
