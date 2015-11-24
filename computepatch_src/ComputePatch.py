@@ -1,10 +1,12 @@
+#!/usr/bin/env python3
+
 from PatchAtom import *
 from Patch import *
-from numpy import argmin
+from ComputePatchOpt import Infinity
 
 import sys
 
-INFINITY = 1000000000
+INFINITY = Infinity()
 
 class TabPatch:
     def __init__(self, file_in, file_out):
@@ -35,6 +37,7 @@ class TabPatch:
             return special_patch
         self.initArrays()
         for index_out in range(1, len(self.file_out)):
+            self.min_current_index = 0
             for index_in in range(1, len(self.file_in)):
                 self.compute_at_indexes(index_in, index_out)
             if index_out < len(self.file_out)-1:
@@ -64,10 +67,11 @@ class TabPatch:
         possible_patches.append(self.previous_patch[index_in-1].copy_and_add(SubstituteAtom(index_in, self.file_out[index_out])))
         possible_patches.append(self.previous_patch[index_in].copy_and_add(AdditionAtom(index_in, self.file_out[index_out])))
         possible_patches.append(self.current_patch[index_in-1].copy_and_add(DestructionAtom(index_in)))
-        start_line = argmin(self.current_patch[:index_in])
-        size = index_in - start_line + 1
-        possible_patches.append(self.current_patch[start_line].copy_and_add(DestructionMultAtom(start_line, size)))
+        size = index_in - self.min_current_index + 1
+        possible_patches.append(self.current_patch[self.min_current_index].copy_and_add(DestructionMultAtom(self.min_current_index, size)))
         self.current_patch[index_in] = min(possible_patches)
+        if(self.current_patch[index_in] < self.current_patch[self.min_current_index]):
+            self.min_current_index = index_in
 
 def help() :
     print('Syntax: %s <source file> <target file>' % sys.argv[0])
