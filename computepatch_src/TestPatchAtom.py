@@ -4,9 +4,6 @@ from PatchAtom import *
 from Patch import *
 
 class TestPatchAtom(unittest.TestCase):
-    '''
-        Vérifie que les PatchAtom sont bien cohérents avec l'énnoncé du sujet.
-    '''
 
     def verify_patch(self, atom, expected_cost, expected_line_number, expected_update_line):
         self.assertEqual(expected_cost, atom.compute_cost())
