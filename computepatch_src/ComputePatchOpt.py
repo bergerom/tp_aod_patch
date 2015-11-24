@@ -44,13 +44,11 @@ class TabPatch:
             self.memo_cur = []
             # memo_prec contient les Patchs de la ligne précédente (i-1)
             self.memo_prec = []
-            i = 0
             p = Patch()
             self.memo_prec.append(p)
             for line in self.file_after_patch:
-                p = p.copy_and_add(AdditionAtom(i, line))
+                p = p.copy_and_add(AdditionAtom(0, line))
                 self.memo_prec.append(p)
-                i += 1
 
     # Met à jour le patch de cout minimum de la colonne j
     def update_memo_min(self, patch, j):
