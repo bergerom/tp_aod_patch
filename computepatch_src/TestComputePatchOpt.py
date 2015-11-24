@@ -24,7 +24,7 @@ class TestTrivialComputePatch(unittest.TestCase):
         f_out = copy.deepcopy(f_in)
         patch = TabPatch(f_in, f_out).compute_patch_opt()
         self.assertEqual(0, patch.cost)
-        self.assertEqual([], patch.atom_list)
+        self.assertEqual("", str(patch))
 
     def testEmptyInFile(self):
         f_in = []

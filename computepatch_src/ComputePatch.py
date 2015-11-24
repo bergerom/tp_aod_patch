@@ -1,5 +1,6 @@
 from PatchAtom import *
 from Patch import *
+from numpy import argmin
 
 import sys
 
@@ -13,13 +14,13 @@ class TabPatch:
         self.file_out.extend(file_out) # afin d'avoir un indiçage qui commence à 1
 
     def initArrays(self):
-        self.previous_patch = [None]*(len(self.file_in)+1) # previous_patch[i] = cout(i, j-1) pour j fixé
-        self.current_patch = [None]*(len(self.file_in)+1)  # current_patch[i]  = cout(i, j)   pour j fixé
+        self.previous_patch = [None]*len(self.file_in) # previous_patch[i] = cout(i, j-1) pour j fixé
+        self.current_patch = [None]*len(self.file_in)  # current_patch[i]  = cout(i, j)   pour j fixé
         # Initialisation de cout(i, 0) pour tout i
         self.current_patch[0] = self.first_current_patch(1)
         self.previous_patch[0] = Patch()
         self.previous_patch[1] = self.previous_patch[0].copy_and_add(DestructionAtom(1))
-        for i in range(len(self.file_in)+1):
+        for i in range(1, len(self.file_in)):
             self.previous_patch[i] = self.previous_patch[0].copy_and_add(DestructionMultAtom(1, i))
 
     def first_current_patch(self, max_line_number):
@@ -33,12 +34,13 @@ class TabPatch:
         if special_patch is not None:
             return special_patch
         self.initArrays()
-        for index_out in range(1, len(self.file_out)+1):
-            for index_in in range(1, len(self.file_in)+1):
-                self.computeAtIndexes(index_in, index_out)
-            self.previous_patch = self.current_patch
-            self.current_patch = [None]*len(self.file_in+1)
-            self.current_patch[0] = self.first_current_patch(index_out+1)
+        for index_out in range(1, len(self.file_out)):
+            for index_in in range(1, len(self.file_in)):
+                self.compute_at_indexes(index_in, index_out)
+            if index_out < len(self.file_out)-1:
+                self.previous_patch = self.current_patch
+                self.current_patch = [None]*len(self.file_in)
+                self.current_patch[0] = self.first_current_patch(index_out+1)
         return self.current_patch[-1]
 
     def speciale_cases(self):
@@ -55,17 +57,16 @@ class TabPatch:
                 patch.add_atom(DestructionMultAtom(1, len(self.file_in[1:])))
         return patch
 
-    def computeAtIndexes(self, index_in, index_out):
+    def compute_at_indexes(self, index_in, index_out):
         possible_patches = []
         if self.file_in[index_in] == self.file_out[index_out]:
             possible_patches.append(self.previous_patch[index_in-1].copy_and_add(IdentityAtom(index_in)))
         possible_patches.append(self.previous_patch[index_in-1].copy_and_add(SubstituteAtom(index_in, self.file_out[index_out])))
         possible_patches.append(self.previous_patch[index_in].copy_and_add(AdditionAtom(index_in, self.file_out[index_out])))
         possible_patches.append(self.current_patch[index_in-1].copy_and_add(DestructionAtom(index_in)))
-        optimal_multiple_destruction = min(self.current_patch[:index_in])
-        start_line = optimal_multiple_destruction.lines_in
+        start_line = argmin(self.current_patch[:index_in])
         size = index_in - start_line + 1
-        possible_patches.append(optimal_multiple_destruction.copy_and_add(DestructionMultAtom(start_line, size)))
+        possible_patches.append(self.current_patch[start_line].copy_and_add(DestructionMultAtom(start_line, size)))
         self.current_patch[index_in] = min(possible_patches)
 
 def help() :
@@ -79,6 +80,6 @@ if __name__ == '__main__':
         file_in = f.readlines()
     with open(sys.argv[2]) as f:
         file_out = f.readlines()
-    patch = TabPatch(file_in, file_out).compute()
+    patch = TabPatch(file_in, file_out).compute_patch_opt()
     print("cost: %d" % patch.cost)
     print(patch)
