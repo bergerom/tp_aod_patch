@@ -6,3 +6,5 @@ doc
 computepatch_src/.idea
 computepatch_src/patchFiles/*
 __pycache__
+benchmark
+*.pyc

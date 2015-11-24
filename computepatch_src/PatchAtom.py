@@ -4,9 +4,13 @@ from abc import ABCMeta, abstractmethod
 
 class PatchAtom:
     def __init__(self, line_nb):
-        self.cost = 0
-        self.line_number = 0
         self.line_number = line_nb
+
+    def __eq__(self, other):
+        return type(other) is type(self) and self.__dict__ == other.__dict__
+
+    def __repr__(self):
+        return '%s(%d)' % (self.__class__.__name__, self.line_number)
 
     @abstractmethod
     def compute_cost(self):

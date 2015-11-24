@@ -1,10 +1,8 @@
-import copy
 from PatchAtom import *
 
 
 class Patch:
     def __init__(self, patch_atom=None):
-        super().__init__()
         self.atom_list = []
         self.cost = 0
         self.lines_in = 0
@@ -19,11 +17,16 @@ class Patch:
         assert(isinstance(other, self.__class__))
         return self.cost < other.cost
 
+    def __eq__(self, other):
+        return type(other) is type(self) and self.__dict__ == other.__dict__
+
     # Retourne une copie du patch
     def copy(self):
         copy_patch = Patch()
-        copy_patch.atom_list = copy.copy(self.atom_list)
-        copy_patch.cost = copy.copy(self.cost)
+        copy_patch.atom_list = list(self.atom_list) # copie de la liste, mais avec contenu partagé
+        copy_patch.cost = self.cost
+        copy_patch.lines_in = self.lines_in
+        copy_patch.lines_out = self.lines_out
         return copy_patch
 
     # Retourne une copie du patch avec une nouvelle instruction
