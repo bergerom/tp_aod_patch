@@ -4,7 +4,7 @@ import string
 import copy
 from PatchAtom import *
 from Patch import *
-from ComputePatchOpt import *
+from ComputePatch import *
 
 def random_string(size):
    return ''.join(random.choice(string.ascii_letters) for _ in range(size))

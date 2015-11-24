@@ -11,6 +11,8 @@ class TabPatch:
         self.file_in.extend(file_in) # afin d'avoir un indiçage qui commence à 1
         self.file_out = [None]
         self.file_out.extend(file_out) # afin d'avoir un indiçage qui commence à 1
+
+    def initArrays(self):
         self.previous_patch = [None]*(len(self.file_in)+1) # previous_patch[i] = cout(i, j-1) pour j fixé
         self.current_patch = [None]*(len(self.file_in)+1)  # current_patch[i]  = cout(i, j)   pour j fixé
         # Initialisation de cout(i, 0) pour tout i
@@ -22,11 +24,15 @@ class TabPatch:
 
     def first_current_patch(self, max_line_number):
         patch = Patch()
-        for line_number in range(max_line_number):
+        for line_number in range(1, max_line_number+1):
             patch.add_atom(AdditionAtom(0, self.file_out[line_number]))
         return patch
 
-    def compute(self):
+    def compute_patch_opt(self):
+        special_patch = self.speciale_cases()
+        if special_patch is not None:
+            return special_patch
+        self.initArrays()
         for index_out in range(1, len(self.file_out)+1):
             for index_in in range(1, len(self.file_in)+1):
                 self.computeAtIndexes(index_in, index_out)
@@ -34,6 +40,20 @@ class TabPatch:
             self.current_patch = [None]*len(self.file_in+1)
             self.current_patch[0] = self.first_current_patch(index_out+1)
         return self.current_patch[-1]
+
+    def speciale_cases(self):
+        patch = None
+        if self.file_in[1:] == []:
+            patch = Patch()
+            for line in self.file_out[1:]:
+                patch.add_atom(AdditionAtom(0, line))
+        elif self.file_out[1:] == []:
+            patch = Patch()
+            if len(self.file_in[1:]) == 1:
+                patch.add_atom(DestructionAtom(1))
+            else:
+                patch.add_atom(DestructionMultAtom(1, len(self.file_in[1:])))
+        return patch
 
     def computeAtIndexes(self, index_in, index_out):
         possible_patches = []
