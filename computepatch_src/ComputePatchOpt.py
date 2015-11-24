@@ -100,7 +100,7 @@ class TabPatch:
             if self.nb_line_n1 == 1:
                 return Patch(DestructionAtom(1))
             else:
-                return Patch(DestructionMultAtom(1, self.nb_line_n2))
+                return Patch(DestructionMultAtom(1, self.nb_line_n1))
 
         # Parcours des lignes de chaque fichier
         for i in range(1, self.nb_line_n1 + 1):
