@@ -40,3 +40,51 @@ class TestTrivialComputePatch(unittest.TestCase):
         self.assertEqual(1, len(patch.atom_list))
         atom = patch.atom_list[0]
         self.assertEqual(DestructionMultAtom(1, len(f_in)), atom)
+
+class TestGeneralComputePatch(unittest.TestCase):
+
+    def testSubstitution(self):
+        f_in = generate_file()
+        f_out = copy.deepcopy(f_in)
+        begin = random.randint(len(f_out)//4, len(f_out)//2)
+        end = random.randint(begin+1, 3*len(f_out)//4)
+        for i in range(begin, end):
+            f_out[i] = f_out[i] + '@'
+        patch = TabPatch(f_in, f_out).compute_patch_opt()
+        atoms = [atom for atom in patch.atom_list if not isinstance(atom, IdentityAtom)]
+        self.assertEqual(end-begin, len(atoms))
+        for i in range(begin, end):
+            self.assertIn(SubstituteAtom(i+1, f_out[i]), atoms) # ligne=i+1 car on indice les lignes à partir de 1 dans l'algorithme
+
+    def testAddition(self):
+        f_in = generate_file()
+        f_out = copy.deepcopy(f_in)
+        position = random.randint(0, len(f_out))
+        size = random.randint(0, 10)
+        f_out[position:position] = ['@']*size
+        patch = TabPatch(f_in, f_out).compute_patch_opt()
+        atoms = [atom for atom in patch.atom_list if not isinstance(atom, IdentityAtom)]
+        self.assertEqual(size, len(atoms))
+        for i in range(position, position+size):
+            self.assertIn(AdditionAtom(position, f_out[i]), atoms)
+
+    def testDestruction(self):
+        f_in = generate_file()
+        f_out = copy.deepcopy(f_in)
+        begin = random.randint(len(f_out)//4, 3*len(f_out)//4)
+        f_out[begin:begin+1] = []
+        patch = TabPatch(f_in, f_out).compute_patch_opt()
+        atoms = [atom for atom in patch.atom_list if not isinstance(atom, IdentityAtom)]
+        self.assertEqual(1, len(atoms))
+        self.assertEqual(DestructionAtom(begin+1), atoms[0])
+
+    def testDestructionMult(self):
+        f_in = generate_file()
+        f_out = copy.deepcopy(f_in)
+        begin = random.randint(len(f_out)//4, len(f_out)//2)
+        end = random.randint(begin+2, 3*len(f_out)//4)
+        f_out[begin:end] = []
+        patch = TabPatch(f_in, f_out).compute_patch_opt()
+        atoms = [atom for atom in patch.atom_list if not isinstance(atom, IdentityAtom)]
+        self.assertEqual(1, len(atoms))
+        self.assertEqual(DestructionMultAtom(begin+1, end-begin), atoms[0])

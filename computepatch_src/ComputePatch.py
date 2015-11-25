@@ -67,8 +67,8 @@ class TabPatch:
         possible_patches.append(self.previous_patch[index_in-1].copy_and_add(SubstituteAtom(index_in, self.file_out[index_out])))
         possible_patches.append(self.previous_patch[index_in].copy_and_add(AdditionAtom(index_in, self.file_out[index_out])))
         possible_patches.append(self.current_patch[index_in-1].copy_and_add(DestructionAtom(index_in)))
-        size = index_in - self.min_current_index + 1
-        possible_patches.append(self.current_patch[self.min_current_index].copy_and_add(DestructionMultAtom(self.min_current_index, size)))
+        size = index_in - self.min_current_index
+        possible_patches.append(self.current_patch[self.min_current_index].copy_and_add(DestructionMultAtom(self.min_current_index+1, size)))
         self.current_patch[index_in] = min(possible_patches)
         if(self.current_patch[index_in] < self.current_patch[self.min_current_index]):
             self.min_current_index = index_in
