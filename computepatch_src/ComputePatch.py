@@ -36,7 +36,7 @@ class TabPatch:
         if special_patch is not None:
             return special_patch
         self.initArrays()
-        for index_out in range(1, 100):#len(self.file_out)):
+        for index_out in range(1, len(self.file_out)):
             self.min_current_index = 0
             for index_in in range(1, len(self.file_in)):
                 self.compute_at_indexes(index_in, index_out)
