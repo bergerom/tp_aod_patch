@@ -21,14 +21,14 @@ class TabPatch:
         # Initialisation de cout(i, 0) pour tout i
         self.current_patch[0] = self.first_current_patch(1)
         self.previous_patch[0] = Patch()
-        self.previous_patch[1] = self.previous_patch[0].copy_and_add(DestructionAtom(1))
+        self.previous_patch[1] = Patch(self.previous_patch[0], DestructionAtom(1))
         for i in range(1, len(self.file_in)):
-            self.previous_patch[i] = self.previous_patch[0].copy_and_add(DestructionMultAtom(1, i))
+            self.previous_patch[i] = Patch(self.previous_patch[0], DestructionMultAtom(1, i))
 
     def first_current_patch(self, max_line_number):
         patch = Patch()
         for line_number in range(1, max_line_number+1):
-            patch.add_atom(AdditionAtom(0, self.file_out[line_number]))
+            patch = Patch(patch, AdditionAtom(0, self.file_out[line_number]))
         return patch
 
     def compute_patch_opt(self):
@@ -36,7 +36,7 @@ class TabPatch:
         if special_patch is not None:
             return special_patch
         self.initArrays()
-        for index_out in range(1, len(self.file_out)):
+        for index_out in range(1, 100):#len(self.file_out)):
             self.min_current_index = 0
             for index_in in range(1, len(self.file_in)):
                 self.compute_at_indexes(index_in, index_out)
@@ -51,24 +51,24 @@ class TabPatch:
         if self.file_in[1:] == []:
             patch = Patch()
             for line in self.file_out[1:]:
-                patch.add_atom(AdditionAtom(0, line))
+                patch = Patch(patch, AdditionAtom(0, line))
         elif self.file_out[1:] == []:
             patch = Patch()
             if len(self.file_in[1:]) == 1:
-                patch.add_atom(DestructionAtom(1))
+                patch = Patch(patch, DestructionAtom(1))
             else:
-                patch.add_atom(DestructionMultAtom(1, len(self.file_in[1:])))
+                patch = Patch(patch, DestructionMultAtom(1, len(self.file_in[1:])))
         return patch
 
     def compute_at_indexes(self, index_in, index_out):
         possible_patches = []
         if self.file_in[index_in] == self.file_out[index_out]:
-            possible_patches.append(self.previous_patch[index_in-1].copy_and_add(IdentityAtom(index_in)))
-        possible_patches.append(self.previous_patch[index_in-1].copy_and_add(SubstituteAtom(index_in, self.file_out[index_out])))
-        possible_patches.append(self.previous_patch[index_in].copy_and_add(AdditionAtom(index_in, self.file_out[index_out])))
-        possible_patches.append(self.current_patch[index_in-1].copy_and_add(DestructionAtom(index_in)))
+            possible_patches.append(Patch(self.previous_patch[index_in-1], IdentityAtom(index_in)))
+        possible_patches.append(Patch(self.previous_patch[index_in-1], SubstituteAtom(index_in, self.file_out[index_out])))
+        possible_patches.append(Patch(self.previous_patch[index_in], AdditionAtom(index_in, self.file_out[index_out])))
+        possible_patches.append(Patch(self.current_patch[index_in-1], DestructionAtom(index_in)))
         size = index_in - self.min_current_index
-        possible_patches.append(self.current_patch[self.min_current_index].copy_and_add(DestructionMultAtom(self.min_current_index+1, size)))
+        possible_patches.append(Patch(self.current_patch[self.min_current_index], DestructionMultAtom(self.min_current_index+1, size)))
         self.current_patch[index_in] = min(possible_patches)
         if(self.current_patch[index_in] < self.current_patch[self.min_current_index]):
             self.min_current_index = index_in

@@ -23,21 +23,5 @@ class TestPatch(unittest.TestCase):
                 line_nb += size
             line_nb += random.randint(1, 10)
             atoms.append(atom)
-            patch.add_atom(atom)
+            patch = Patch(patch, atom)
         self.assertEqual(sum(atom.compute_cost() for atom in atoms), patch.cost)
-
-    def testPatchCopy(self):
-        patch = Patch()
-        patch.add_atom(AdditionAtom(3, 'xyz'))
-        patch.add_atom(DestructionAtom(6))
-        patch.add_atom(SubstituteAtom(8, 'foo'))
-        patch2 = patch.copy()
-        self.assertIsNot(patch, patch2)
-        self.assertEqual(patch, patch2)
-        atom = SubstituteAtom(9, 'bar')
-        patch2.add_atom(atom)
-        self.assertNotEqual(patch, patch2)
-        self.assertEqual(3, len(patch.atom_list))
-        self.assertEqual(4, len(patch2.atom_list))
-        patch.add_atom(atom)
-        self.assertEqual(patch, patch2)

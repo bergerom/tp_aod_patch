@@ -2,11 +2,13 @@ from PatchAtom import *
 
 
 class Patch:
-    def __init__(self, patch_atom=None):
-        self.atom_list = []
+    def __init__(self, previous_patch=None, patch_atom=None):
         self.cost = 0
-        if patch_atom is not None:
-            self.add_atom(patch_atom)
+        self.patch_atom = patch_atom
+        self.previous_patch = previous_patch
+        if previous_patch is not None:
+            assert patch_atom is not None
+            self.cost = previous_patch.cost + patch_atom.compute_cost()
 
     def __str__(self):
         return "\n".join(str(atom) for atom in self.atom_list if not isinstance(atom, IdentityAtom))
@@ -21,20 +23,12 @@ class Patch:
     def __eq__(self, other):
         return type(other) is type(self) and self.__dict__ == other.__dict__
 
-    # Retourne une copie du patch
-    def copy(self):
-        copy_patch = Patch()
-        copy_patch.atom_list = list(self.atom_list) # copie de la liste, mais avec contenu partagé
-        copy_patch.cost = self.cost
-        return copy_patch
-
-    # Retourne une copie du patch avec une nouvelle instruction
-    def copy_and_add(self, next_atom):
-        copy_patch = self.copy()
-        copy_patch.add_atom(next_atom)
-        return copy_patch
-
-    # Ajoute une instruction à la liste
-    def add_atom(self, atom):
-        self.atom_list.append(atom)
-        self.cost += atom.compute_cost()
+    @property
+    def atom_list(self):
+        atom_list = []
+        patch = self
+        while patch.patch_atom is not None:
+            atom_list.append(patch.patch_atom)
+            patch = patch.previous_patch
+        atom_list.reverse()
+        return atom_list
