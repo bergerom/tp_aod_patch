@@ -5,8 +5,6 @@ class Patch:
     def __init__(self, patch_atom=None):
         self.atom_list = []
         self.cost = 0
-        self.lines_in = 0
-        self.lines_out = 0
         if patch_atom is not None:
             self.add_atom(patch_atom)
 
@@ -28,8 +26,6 @@ class Patch:
         copy_patch = Patch()
         copy_patch.atom_list = list(self.atom_list) # copie de la liste, mais avec contenu partagé
         copy_patch.cost = self.cost
-        copy_patch.lines_in = self.lines_in
-        copy_patch.lines_out = self.lines_out
         return copy_patch
 
     # Retourne une copie du patch avec une nouvelle instruction
@@ -42,6 +38,3 @@ class Patch:
     def add_atom(self, atom):
         self.atom_list.append(atom)
         self.cost += atom.compute_cost()
-        i, j = atom.update_line_nb()
-        self.lines_in += i
-        self.lines_out += j

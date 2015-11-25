@@ -25,9 +25,6 @@ class TestPatch(unittest.TestCase):
             atoms.append(atom)
             patch.add_atom(atom)
         self.assertEqual(sum(atom.compute_cost() for atom in atoms), patch.cost)
-        self.assertEqual(sum(atom.update_line_nb()[0] for atom in atoms), patch.lines_in)
-        self.assertEqual(sum(atom.update_line_nb()[1] for atom in atoms), patch.lines_out)
-
 
     def testPatchCopy(self):
         patch = Patch()

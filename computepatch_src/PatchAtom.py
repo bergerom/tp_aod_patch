@@ -16,17 +16,10 @@ class PatchAtom:
     def compute_cost(self):
         pass
 
-    @abstractmethod
-    def update_line_nb(self):
-        pass
-
 
 # Classes héritant de PatchAtom
 
 class IdentityAtom(PatchAtom):
-    def update_line_nb(self):
-        return 1, 1
-
     def __str__(self):
         return ""
 
@@ -34,9 +27,6 @@ class IdentityAtom(PatchAtom):
         return 0
 
 class AdditionAtom(PatchAtom):
-    def update_line_nb(self):
-        return 0, 1
-
     def __init__(self, line_nb, new_line):
         super().__init__(line_nb)
         assert isinstance(new_line, str)
@@ -50,9 +40,6 @@ class AdditionAtom(PatchAtom):
 
 
 class SubstituteAtom(PatchAtom):
-    def update_line_nb(self):
-        return 1, 1
-
     def __init__(self, line_nb, subs_line):
         super().__init__(line_nb)
         assert isinstance(subs_line, str)
@@ -66,9 +53,6 @@ class SubstituteAtom(PatchAtom):
 
 
 class DestructionAtom(PatchAtom):
-    def update_line_nb(self):
-        return 1, 0
-
     def __str__(self):
         return "d {}".format(self.line_number)
 
@@ -77,9 +61,6 @@ class DestructionAtom(PatchAtom):
 
 
 class DestructionMultAtom(PatchAtom):
-    def update_line_nb(self):
-        return self.destruction_nb, 0
-
     def __init__(self, line_nb, destruction_nb):
         super().__init__(line_nb)
         self.destruction_nb = destruction_nb
