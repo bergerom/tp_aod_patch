@@ -8,3 +8,4 @@ computepatch_src/patchFiles/*
 __pycache__
 benchmark
 *.pyc
+*.o
