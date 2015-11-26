@@ -19,17 +19,11 @@ class TabPatch:
         self.previous_patch = [None]*len(self.file_in) # previous_patch[i] = cout(i, j-1) pour j fixé
         self.current_patch = [None]*len(self.file_in)  # current_patch[i]  = cout(i, j)   pour j fixé
         # Initialisation de cout(i, 0) pour tout i
-        self.current_patch[0] = self.first_current_patch(1)
+        self.current_patch[0] = Patch(Patch(), AdditionAtom(0, self.file_out[1]))
         self.previous_patch[0] = Patch()
         self.previous_patch[1] = Patch(self.previous_patch[0], DestructionAtom(1))
         for i in range(1, len(self.file_in)):
             self.previous_patch[i] = Patch(self.previous_patch[0], DestructionMultAtom(1, i))
-
-    def first_current_patch(self, max_line_number):
-        patch = Patch()
-        for line_number in range(1, max_line_number+1):
-            patch = Patch(patch, AdditionAtom(0, self.file_out[line_number]))
-        return patch
 
     def compute_patch_opt(self):
         special_patch = self.speciale_cases()
@@ -43,7 +37,7 @@ class TabPatch:
             if index_out < len(self.file_out)-1:
                 self.previous_patch = self.current_patch
                 self.current_patch = [None]*len(self.file_in)
-                self.current_patch[0] = self.first_current_patch(index_out+1)
+                self.current_patch[0] = Patch(self.previous_patch[0], AdditionAtom(0, self.file_out[index_out+1]))
         return self.current_patch[-1]
 
     def speciale_cases(self):
@@ -85,5 +79,5 @@ if __name__ == '__main__':
     with open(sys.argv[2]) as f:
         file_out = f.readlines()
     patch = TabPatch(file_in, file_out).compute_patch_opt()
-    print("cost: %d" % patch.cost)
+    print("cost: %d" % patch.cost, file=sys.stderr)
     print(patch)
