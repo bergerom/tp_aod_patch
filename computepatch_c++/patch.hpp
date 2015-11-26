@@ -15,3 +15,8 @@ public:
     std::list<std::shared_ptr<PatchAtom>> getAtoms(void) const ;
     void printInStream(std::ostream &stream) const ;
 };
+
+inline bool operator< (const Patch& lhs, const Patch& rhs){ return lhs.getCost() < rhs.getCost() ; }
+inline bool operator> (const Patch& lhs, const Patch& rhs){return  operator< (rhs,lhs);}
+inline bool operator<=(const Patch& lhs, const Patch& rhs){return !operator> (lhs,rhs);}
+inline bool operator>=(const Patch& lhs, const Patch& rhs){return !operator< (lhs,rhs);}
