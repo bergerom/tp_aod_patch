@@ -13,50 +13,96 @@
    \RequirePackage{tikz}   % Pour faire des schémas
    \RequirePackage{graphicx} % Pour inclure des images
    \RequirePackage{listings} % pour mettre des listings
+
+   \newcommand{\set}[1]{\left\{ #1 \right\}}
+   \newcommand{\abs}[1]{\left| #1 \right|}
 % Fin Préambule; package qui peuvent être utiles
 
 \title{Rapport de TP 4MMAOD : Génération de patch optimal}
 \author{
-NOM Prénom étudiant$_1$ (groupe étudiant$_1$) 
-\\ NOM Prénom étudiant$_2$ (groupe étudiant$_2$) 
+Matthieu Bergeron (ISI2A\_G2)
+Tom Cornebize (ISI2A\_G2)
 }
+
+\setlength\parindent{0pt}
 
 \begin{document}
 
 \maketitle
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{\em Préambule}
-{\em \begin{itemize} 
-   \item Compléter ce patron de rapport en supprimant toutes les phrases en italique\,: elles ne doivent pas apparaître dans le rapport pdf.
-   \item Il sera attribué {\bf 1 point} pour la qualité globale du rapport\,: présentation, concision et clarté de l'argumentation.
-\end{itemize}
-}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Principe de notre  programme (1 point)}
-{\em Mettre ici une explication brève du principe de votre programme en  précisant la méthode implantée (récursive, itérative) et les
-choix effectués (notamment pour l'ordonnancement des instructions).
-} 
+
+\subsection{Équation de Bellman}
+
+Nous rappelons l'équation de Bellman sur laquelle est basé notre programme.
+
+Soient $\ell_1$ (resp. $\ell_2$) le nombre de lignes du fichier $F_1$ (resp. $F_2$).
+
+Nous noterons $F_i[n]$, avec $n \in [1, \ell_i]$, pour dénoter la $n$-ème ligne du fichier
+$F_i$. Nous noterons $\abs{F_i[n]}$ la longueur de cette ligne.
+
+Pour $n_1 \in [1, \ell_1]$ et $n_2 \in [1, \ell_2]$, nous définissons $cout(n_1, n_2)$
+comme étant le coût du patch de coût minimal permettant de transformer les $n_1$
+premières lignes du fichier $F_1$ en les $n_2$ premières lignes du fichier $F_2$.
+
+La fonction $cout$ peut s'écrire de manière inductive :
+
+\[
+    cout(n_1, n_2) = \min
+    \begin{cases}
+        cout(n_1-1, n_2-1)                          & \text{si } F_1[n_1] = F_2[n_2]\\
+        cout(n_1-1, n_2-1) + 10 + \abs{F_2[n_2]}    & \text{(substitution)}\\
+        cout(n_1-1, n_2) + 10                       & \text{(destruction)}\\
+        \min_{i \in [2, n_1]} cout(n_1-i, n_2) + 15          & \text{(destruction multiple)}\\
+        cout(n_1, n_2-1) + 10 + \abs{F_2[n_2]}      & \text{(ajout)}
+    \end{cases}
+\]
+
+Avec comme condition initiale $cout(0, 0) = 0$, $cout(1, 0) = 10$, $cout(n_1, 0) = 15$
+si $n_1 > 1$ et $cout(0, n_2)$ = $10n_2$.
+
+\subsection{Implémentation}
+
+Notre programme est une implémentation itérative de cette équation. Il est constitué
+de deux boucles \emph{for} imbriquées. La boucle extérieure itère sur l'indice $n_2$
+du fichier de sortie et la boucle intérieure itère sur l'indice $n_1$ du fichier
+d'entrée.
+
+Notons que le calcul de $cout(n_1, n_2)$ dépend de $cout(n_1-1, n_2)$,
+$cout(n_1, n_2-1)$, $cout(n_1-1, n_2-1)$ et $cout(n_1-i, n_2)$ pour tout $i$.
+Nous n'avons donc pas besoin de garder en mémoire les valeurs de $cout(i, j)$ pour
+$j < n_2-1$.
+
+Nous manipulons deux tableaux de $n_1+1$ cases. Le premier représente les solutions
+de $cout(i, n_2)$ pour tout $i$ et pour le $n_2$ courant, le second représente
+les solutions de $cout(i, n_2-1)$ pour tout $i$ et pour le $n_2$ courant.
+Ainsi, nous évitions de devoir utiliser une matrice de $(n_1+1)\times(n_2+2)$ cases
+et faisons donc une économie de mémoire importante.
+
+Pour la destruction multiple, nous devons calculer le patch de coût minimal parmi
+tous les patchs précédemment calculés pour une même valeur de $n_2$.
+Plutôt que de reparcourir le tableau à chaque fois, nous stockons l'indice de
+ce minimum, que nous mettons à jour à chaque nouveau patch calculé.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Analyse du coût théorique (3 points)}
-{\em Donner ici l'analyse du coût théorique de votre programme en fonction des nombres $n_1$ et $n_2$ de lignes 
+{\em Donner ici l'analyse du coût théorique de votre programme en fonction des nombres $n_1$ et $n_2$ de lignes
 et $c_1$ et $c_2$ de caractères des deux fichiers en entrée.
- Pour chaque coût, donner la formule qui le caractérise (en justifiant brièvement pourquoi cette formule correspond à votre programme), 
+ Pour chaque coût, donner la formule qui le caractérise (en justifiant brièvement pourquoi cette formule correspond à votre programme),
  puis l'ordre du coût en fonction de $n_1, n_2, c_1, c_2$ en notation $\Theta$ de préférence, sinon $O$.}
 
   \subsection{Nombre  d'opérations en pire cas\,: }
     \paragraph{Justification\,: }
-    {\em La justification peut être par exemple de la forme: \\ 
-       "Le programme itératif contient les boucles $k_1=...$, $k_2= ...$ etc correspondant à la somme 
-      $$T(n_1, n_2, c_1, c_2) = \sum_{k_1=...}^{...} ... \sum ... + \sum_{i=...}^{...} ...$$ 
+    {\em La justification peut être par exemple de la forme: \\
+       "Le programme itératif contient les boucles $k_1=...$, $k_2= ...$ etc correspondant à la somme
+      $$T(n_1, n_2, c_1, c_2) = \sum_{k_1=...}^{...} ... \sum ... + \sum_{i=...}^{...} ...$$
       somme que nous avons calculée (ou majorée) par la technique de  ... " \\
       ou  encore\,:  \\
-      "les appels récursifs du programme permettent de modéliser son coût par le système d'équations aux récurrences 
+      "les appels récursifs du programme permettent de modéliser son coût par le système d'équations aux récurrences
       $$T(k_1, k_2) = ...  \mbox{~avec~les~conditions~initiales~....~} $$
       Le coût indiqué est obtenu en résolvant ce système par la méthode de  .... "
-    } 
+    }
   \subsection{Place mémoire requise\,: }
     \paragraph{Justification\,: }
 
@@ -71,16 +117,16 @@ et $c_1$ et $c_2$ de caractères des deux fichiers en entrée.
       de la machine et la méthode utilisée pour mesurer le temps.
      }
 
-    \subsubsection{Description synthétique de la machine\,:} 
-      {\em indiquer ici le  processeur et sa fréquence, la mémoire, le système d'exploitation. 
-       Préciser aussi si la machine était monopolisée pour un test, ou notamment si 
-       d'autres processus ou utilisateurs étaient en cours d'exécution. 
-      } 
+    \subsubsection{Description synthétique de la machine\,:}
+      {\em indiquer ici le  processeur et sa fréquence, la mémoire, le système d'exploitation.
+       Préciser aussi si la machine était monopolisée pour un test, ou notamment si
+       d'autres processus ou utilisateurs étaient en cours d'exécution.
+      }
 
-    \subsubsection{Méthode utilisée pour les mesures de temps\,: } 
-      {\em préciser ici  comment les mesures de temps ont été effectuées (fonction appelée) et l'unité de temps; en particulier, 
+    \subsubsection{Méthode utilisée pour les mesures de temps\,: }
+      {\em préciser ici  comment les mesures de temps ont été effectuées (fonction appelée) et l'unité de temps; en particulier,
        préciser comment les 5 exécutions pour chaque test ont été faites (par exemple si le même test est fait 5 fois de suite, ou si les tests sont alternés entre
-       les mesures, ou exécutés en concurrence etc). 
+       les mesures, ou exécutés en concurrence etc).
       }
 
   \subsection{Mesures expérimentales}
@@ -117,16 +163,15 @@ et $c_1$ et $c_2$ de caractères des deux fichiers en entrée.
     \end{figure}
 
 \subsection{Analyse des résultats expérimentaux}
-{\em Donner  une réponse justifiée  à la question\,: 
+{\em Donner  une réponse justifiée  à la question\,:
               les  temps mesurés correspondent ils  à votre analyse théorique (nombre d’opérations et défauts de cache) ?
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Question\,: et  si le coût d'un patch était sa taille en octets ? (1 point)}
-{\em Préciser le principe de la résolution choisie (parmi celles vues en cours); donner  les modifications à apporter (soit à vos  équations, soit à votre programme, au choix) 
-pour s'adapter à cette nouvelle fonction de coût. 
+{\em Préciser le principe de la résolution choisie (parmi celles vues en cours); donner  les modifications à apporter (soit à vos  équations, soit à votre programme, au choix)
+pour s'adapter à cette nouvelle fonction de coût.
 }
 
 \end{document}
 %% Fin mise au format
-
