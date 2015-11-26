@@ -7,5 +7,8 @@ patchAtom.o: patchAtom.cpp patchAtom.hpp
 patch.o: patch.cpp patch.hpp patchAtom.hpp
 	$(CC) -c $< $(CFLAGS)
 
+computePatch.o: computePatch.cpp computePatch.hpp patch.hpp patchAtom.hpp
+	$(CC) -c $< $(CFLAGS)
+
 clean:
 	rm -rf *.o
