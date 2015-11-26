@@ -25,7 +25,7 @@ int AdditionAtom::compute_cost(void) const {
 }
 
 void AdditionAtom::printInStream(std::ostream &stream) const {
-    stream << "+" << this->line_nb << "\n" << this->new_line << "\n" ;
+    stream << "+ " << this->line_nb << "\n" << this->new_line << "\n" ;
 }
 
 SubstituteAtom::SubstituteAtom(int line_nb, const std::string &subs_line) : PatchAtom(line_nb) {
@@ -37,7 +37,7 @@ int SubstituteAtom::compute_cost(void) const {
 }
 
 void SubstituteAtom::printInStream(std::ostream &stream) const {
-    stream << "=" << this->line_nb << "\n" << this->subs_line << "\n" ;
+    stream << "= " << this->line_nb << "\n" << this->subs_line << "\n" ;
 }
 
 DestructionAtom::DestructionAtom(int line_nb) : PatchAtom(line_nb) {
@@ -49,7 +49,7 @@ int DestructionAtom::compute_cost(void) const {
 }
 
 void DestructionAtom::printInStream(std::ostream &stream) const {
-    stream << "d" << this->line_nb << "\n" ;
+    stream << "d " << this->line_nb << "\n" ;
 }
 
 DestructionMultAtom::DestructionMultAtom(int line_nb, int size) : PatchAtom(line_nb) {
@@ -61,5 +61,5 @@ int DestructionMultAtom::compute_cost(void) const {
 }
 
 void DestructionMultAtom::printInStream(std::ostream &stream) const {
-    stream << "D" << this->line_nb << " " << this->size << "\n" ;
+    stream << "D " << this->line_nb << " " << this->size << "\n" ;
 }
