@@ -2,6 +2,11 @@ from PatchAtom import *
 
 
 class Patch:
+    '''
+        Représente un patch.
+        Un patch est considéré ici comme étant soit un patch vide, soit un couple
+        constitué d'un patch précédent et d'un atome de patch.
+    '''
     def __init__(self, previous_patch=None, patch_atom=None):
         self.cost = 0
         self.patch_atom = patch_atom
@@ -25,6 +30,9 @@ class Patch:
 
     @property
     def atom_list(self):
+        '''
+            Renvoie la liste ordonnée des atomes de ce patch.
+        '''
         atom_list = []
         patch = self
         while patch.patch_atom is not None:
