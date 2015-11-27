@@ -105,7 +105,7 @@ ce minimum, que nous mettons à jour à chaque nouveau patch calculé.
 	On néglige donc les deux premiers coûts, ce qui nous donne : \\ \\
 	$$T(n1,n2,c1,c2) = n1 \times n2 \times Coût(\text{Calcul patch (i,j)})$$
 	\\ 
-	Nous devons donc calculer le coût du calcul du patch (i,j), c'est le coût de la fonction \emph{compute\_at\_indexes(i,j)}.\\ \\
+	Nous devons donc calculer le coût du calcul du patch (i,j), c'est le coût de la fonction \emph{compute\_at\_indexes(index_in,index_out)}.\\ \\
 	Décomposons les coûts internes à cette fonction dans le pire cas :
 	\begin{itemize}
 	\item Une comparaison de chaine de caractère $\Rightarrow  O(\max(li,lj))$ en notant li (\textit{resp lj}) la longueur de la ligne de i (\textit{resp j}).
