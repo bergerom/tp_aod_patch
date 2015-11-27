@@ -79,5 +79,5 @@ if __name__ == '__main__':
     with open(sys.argv[2]) as f:
         file_out = f.readlines()
     patch = TabPatch(file_in, file_out).compute_patch_opt()
-    print("cost: %d" % patch.cost, file=sys.stderr)
+    print("%d" % patch.cost, file=sys.stderr)
     print(patch)
