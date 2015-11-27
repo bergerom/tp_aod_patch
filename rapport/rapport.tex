@@ -72,7 +72,7 @@ d'entrée.
 Voici le pseudo-code de cet algorithme :
 \begin{verbatimtab}
 	Retourner la réponse directement si on est dans un cas trivial
-	Faire les intialisations nécéssaires
+	Faire les initialisations nécessaires
 	for(j=1..n_2)
 	  for(i=1..n_1)
 		Calcul du patch minimum (i,j) -- Avec l'équation de Bellman
@@ -102,7 +102,7 @@ ce minimum, que nous mettons à jour à chaque nouveau patch calculé.
     En reprenant les notations de la partie précédente :
 
     \[T(n_1,n_2,c_1,c_2) = \underbrace{Coût(\text{Cas triviaux})}_{\cplx{n_2}} +
-    \underbrace{Coût(\text{Intialisations})}_{\cplx{n_1+n_2}} +
+    \underbrace{Coût(\text{Initialisations})}_{\cplx{n_1+n_2}} +
     \sum_{j=1}^{n_2} \sum_{i=1}^{n_1} Coût((\text{Calcul patch (i,j)})\]
 
 	On néglige donc les deux premiers coûts, ce qui nous donne :
@@ -111,18 +111,21 @@ ce minimum, que nous mettons à jour à chaque nouveau patch calculé.
 	Nous devons donc calculer le coût du calcul du patch (i,j), c'est le coût de la fonction \emph{compute\_at\_indexes(index\_in,index\_out)}.
 	Décomposons les coûts internes à cette fonction dans le pire cas :
 	\begin{itemize}
-	\item Une comparaison de chaine de caractère a un coût de $\cplx{\max(l_i,l_j)}$ en notant $l_i$ (resp. $l_j$) la longueur de la ligne de $i$ (resp $j$).
+	\item Une comparaison de chaîne de caractère a un coût de $\cplx{\max(l_i,l_j)}$ en notant $l_i$ (resp. $l_j$) la longueur de la ligne de $i$ (resp $j$).
 	\item Un cout constant pour le reste des opérations
 	\end{itemize}
 
 	On en déduit que le cout au pire cas de cette fonction vaut : $\cplx{\max(l_i,l_j)}$ (les autres coûts étant constants).
 
-	\[T(n_1,n_2,c_1,c_2) = \sum_{j=1}^{n_2} \sum_{i=1}^{n_1} \max(li,lj) \leq n_1 \times n_2 \times L \ \ \text{avec } L = \max(c_1,c_2)\]
+	\[T(n_1,n_2,c_1,c_2) = \sum_{j=1}^{n_2} \sum_{i=1}^{n_1} \max(l_i,l_j) \leq n_1 \times n_2 \times L\]
 
 	Finalement, $T(n_1,n_2,c_1,c_2) = \cplx{(n_1 \times n_2 \times L)}$ avec $L$ la longueur de la plus grande chaîne.
 
+    Notons qu'en pratique, le coût de comparaison de deux chaînes est souvent constant. En effet, on compare d'abord leurs tailles, si celles-ci diffèrent, on déduit
+    que les deux chaînes sont différentes.
+
   \subsection{Place mémoire requise\,: }
-	Nous utilisons deux listes pous stocker les informations nécéssaire au calcul du coût courant : une pour la ligne courante, l'autre pour la ligne
+	Nous utilisons deux listes pour stocker les informations nécessaire au calcul du coût courant : une pour la ligne courante, l'autre pour la ligne
     précédente. Le patch de cout minimum sur une ligne est stocké avec son indice.
     Le cout total en mémoire doit donc prendre en compte :
     \begin{itemize}
@@ -134,7 +137,7 @@ ce minimum, que nous mettons à jour à chaque nouveau patch calculé.
 
   \subsection{Nombre de défauts de cache sur le modèle CO\,: }
     Pour simplifier les choses, nous pouvons considérer que nos valeurs sont stockées dans un grand tableau, de taille $2 \times n_1 + 1$.\\
-    A l'itération i, le programme a besoin de quatres cases en mémoire :
+    A l'itération i, le programme a besoin de quatre cases en mémoire :
     \begin{itemize}
     \item $(i-1)$ pour la destruction
     \item $(i - i_{min})$ pour la multi-destruction, $i_{min}$ étant défini tel que $T[i-i_{min}]$ est le patch de cout minimal.
@@ -155,7 +158,7 @@ ce minimum, que nous mettons à jour à chaque nouveau patch calculé.
 	\textbf{Si $Z > n_1$ :}
     \begin{itemize}
 		 \item Un défaut de cache inévitable pour écrire les tranches du tableau dans le cache : $\Theta(\dfrac{n_1}{L})$
-		 \item Pas de défaut de chache pour accéder aux cases mémoires : $\Theta(\dfrac{n_1}{L})$
+		 \item Pas de défaut de cache pour accéder aux cases mémoires : $\Theta(\dfrac{n_1}{L})$
      \end{itemize}
 
 	\textbf{Si $Z < n_1$ :}
@@ -169,12 +172,12 @@ ce minimum, que nous mettons à jour à chaque nouveau patch calculé.
 
  	Avec cette simplification, nous sommes sûr d'avoir le patch de cout minimum sur la ligne dans le cache. En effet si la case du patch dans
  	le tableau est proche
- 	de la case courante,  elle est déjà dans le cache.Sinon, elle est récupérée avec le cache-miss provoqué par l'accès à l'indice
+ 	de la case courante,  elle est déjà dans le cache. Sinon, elle est récupérée avec le cache-miss provoqué par l'accès à l'indice
  	$i - n_1$.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Compte rendu d'expérimentation}
-  \subsection{Conditions expérimentaless}
+  \subsection{Conditions expérimentales}
     Notre programme est malheureusement trop lent pour fonctionner sur les benchmark fournis.
     Nous avons pourtant un algorithme qui a une complexité temporelle quadratique
     en la taille des données et une complexité spatiale linéaire en la taille des données,
@@ -191,7 +194,7 @@ ce minimum, que nous mettons à jour à chaque nouveau patch calculé.
       chacun deux coeurs logiques (technologie Hyper-Threading d'Intel), fréquence
       de 2.6 GHz à 3.2 GHz.
       Le système d'exploitation était \emph{Linux Mint Debian Edition 2}, version 64 bits.
-      D'autres processus étaient en cours d'exécution mais ne necessitaient pas
+      D'autres processus étaient en cours d'exécution mais ne nécessitaient pas
       d'important coûts de calculs.
 
     \subsubsection{Méthode utilisée pour les mesures de temps\,: }
@@ -210,7 +213,7 @@ ce minimum, que nous mettons à jour à chaque nouveau patch calculé.
       de cache.
 
   \subsection{Mesures expérimentales}
-    Comme mentionné précédemment, les tests n'ont malheureusement pas pu êre réalisés
+    Comme mentionné précédemment, les tests n'ont malheureusement pas pu être réalisés
     sur les fichiers fournis.
     Nous présentons ici les résultats de nos expériences, menées sur des fichiers
     générés automatiquement.

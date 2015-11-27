@@ -46,7 +46,7 @@ Puis utiliser la commande suivante, pour deux fichiers f_in et f_out.
 
     ./verifier.sh f_in f_out
 
-On peut également faire une verification plus poussée de notre programme, en vérifiant
+On peut également faire une vérification plus poussée de notre programme, en vérifiant
 également que le coût du patch calculé est cohérent. Pour cela, utiliser la commande
 suivante, qui génère deux fichiers aléatoirement en utilisant benchmark_generator.py,
 vérifie la correction du patch avec verifier.sh puis compare le coût du patch
