@@ -4,6 +4,8 @@ import sys
 import random
 import string
 
+# Génère deux fichiers aléatoirement, le second étant une copie modifiée du premier.
+
 class Generator:
 
     def __init__(self):

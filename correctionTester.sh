@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+# Prend en argument une taille de fichier.
+# Génère aléatoirement deux fichiers de la taille donnée, génère le patch correspondant,
+# puis vérifie sa correction (patch correct, et de coût inférieur à la borne trouvée
+# par le générateur).
+
 FILE_IN="/tmp/infile"
 FILE_OUT="/tmp/outfile"
 

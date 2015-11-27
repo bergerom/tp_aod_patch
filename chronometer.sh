@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# Prend en argument une taille de fichier.
+# Génère aléatoirement deux fichiers de la taille donnée, puis mesure le temps
+# d'exécution de ComputePatch.py sur ces deux fichiers.
+
 FILE_IN="/tmp/infile"
 FILE_OUT="/tmp/outfile"
 

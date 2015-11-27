@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# Prend en argument deux fichiers.
+# Calcul le patch correspondant. Puis vérifie que l'application du patch sur
+# le premier fichier génère bien le second fichier.
+
 PATCH_LOCATION="/tmp/patch"
 OUT_LOCATION="/tmp/out"
 
