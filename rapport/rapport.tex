@@ -1,4 +1,5 @@
 \documentclass[a4paper, 10pt, french]{article}
+\usepackage{moreverb}
 % Préambule; packages qui peuvent être utiles
    \RequirePackage[T1]{fontenc}        % Ce package pourrit les pdf...
    \RequirePackage{babel,indentfirst}  % Pour les césures correctes,
@@ -27,43 +28,96 @@ NOM Prénom étudiant$_1$ (groupe étudiant$_1$)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{\em Préambule}
-{\em \begin{itemize} 
-   \item Compléter ce patron de rapport en supprimant toutes les phrases en italique\,: elles ne doivent pas apparaître dans le rapport pdf.
-   \item Il sera attribué {\bf 1 point} pour la qualité globale du rapport\,: présentation, concision et clarté de l'argumentation.
-\end{itemize}
-}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Principe de notre  programme (1 point)}
-{\em Mettre ici une explication brève du principe de votre programme en  précisant la méthode implantée (récursive, itérative) et les
-choix effectués (notamment pour l'ordonnancement des instructions).
-} 
+~\\Nous avons choisi d'implémenter un algorithme itératif, pour éviter de faire déborder la pile du processus. \\
+Notre algorithme calcule donc le patch de cout minimum transformant i lignes du fichiers d'entrée en j lignes
+du fichier de sortie , pour tout $i \in [1..n1]$ et $j \in [1..n2]$. \\
+Voici le pseudo-code de cet algorithme :
+\begin{verbatimtab}
+	Retourner la réponse directement si on est dans un cas trivial
+	Faire les intialisations nécéssaires pour les indices i=0 et j=0
+	for(i=1..n2)
+	  for(j=1..n1)
+		Calcul du patch minimum (i,j)
+		Mettre à jour le patch minimum de la ligne si besoin
+	
+	Retourner le dernier résultat
+\end{verbatimtab}
 
+Notons que l'ordre des deux boucles $for$ est important : en effet la convention que l'on a choisi 
+nous permet d'avoir un cout mémoire moindre.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Analyse du coût théorique (3 points)}
-{\em Donner ici l'analyse du coût théorique de votre programme en fonction des nombres $n_1$ et $n_2$ de lignes 
-et $c_1$ et $c_2$ de caractères des deux fichiers en entrée.
- Pour chaque coût, donner la formule qui le caractérise (en justifiant brièvement pourquoi cette formule correspond à votre programme), 
- puis l'ordre du coût en fonction de $n_1, n_2, c_1, c_2$ en notation $\Theta$ de préférence, sinon $O$.}
 
   \subsection{Nombre  d'opérations en pire cas\,: }
-    \paragraph{Justification\,: }
-    {\em La justification peut être par exemple de la forme: \\ 
-       "Le programme itératif contient les boucles $k_1=...$, $k_2= ...$ etc correspondant à la somme 
-      $$T(n_1, n_2, c_1, c_2) = \sum_{k_1=...}^{...} ... \sum ... + \sum_{i=...}^{...} ...$$ 
-      somme que nous avons calculée (ou majorée) par la technique de  ... " \\
-      ou  encore\,:  \\
-      "les appels récursifs du programme permettent de modéliser son coût par le système d'équations aux récurrences 
-      $$T(k_1, k_2) = ...  \mbox{~avec~les~conditions~initiales~....~} $$
-      Le coût indiqué est obtenu en résolvant ce système par la méthode de  .... "
-    } 
+
+    En reprenant les notations de la partie précédente : \\ \\
+    $$T(n1,n2,c1,c2) = \underbrace{Coût(\text{Cas triviaux})}_{O(1)} + 
+    \underbrace{Coût(\text{Intialisations})}_{O(n1)} + 
+    \sum_{i=1}^{n2} \sum_{i=1}^{n1} Coût((\text{Calcul patch (i,j)})$$ \\
+	On néglige donc les deux premiers coûts, ce qui nous donne : \\ \\
+	$$T(n1,n2,c1,c2) = n1 \times n2 \times Coût(\text{Calcul patch (i,j)})$$
+	\\ 
+	Nous devons donc calculer le coût du calcul du patch (i,j), c'est le cout de la fonction \emph{compute\_at\_indexes(i,j)}.\\ \\
+	Décomposons les coûts internes à cette fonction dans le pire cas :
+	\begin{itemize}
+	\item Une comparaison de chaine de caractère $\Rightarrow  O(\max(li,lj))$ en notant li (\textit{resp lj}) la longueur de la ligne de i (\textit{resp j}).
+	\item 5 ajouts en fin de liste et une comparaison $\Rightarrow O(1)$
+	\item Un minimum sur 5 éléments $\Rightarrow O(1)$
+	\item Une comparaison d'entiers + une affectation $\Rightarrow O(1)$
+	\end{itemize}
+	~\\
+	On en déduit que le cout au pire cas de cette fonction vaut : $\max(li,lj)$ (les autres coûts étant constants)
+	\\ 
+	$$T(n1,n2,c1,c2) = \sum_{i=1}^{n2} \sum_{i=1}^{n1} \max(li,lj) \leq n1 \times n2 \times L \ \ \text{avec } L = \max(c1,c2)$$
+	\\
+	 \ \ \ $\text{Finalement, } T(n1,n2,c1,c2) = O(n1 \times n2 \times L)\ \ \text{avec } L = \max(c1,c2) $
   \subsection{Place mémoire requise\,: }
-    \paragraph{Justification\,: }
+    Nous utilisons deux listes pous stocker les informations nécéssaire au calcul du coût courant : une pour la ligne courante, l'autre pour la ligne
+    précédente. Le patch de cout minimum sur une ligne est stocké avec son indice.\\ \\
+    Le cout total en mémoire doit donc prendre en compte : 
+    \begin{itemize}
+    \item Le coût du stockage des fichiers en entrée : \ $O(c1 + c2)$
+    \item Le coût des mémorisations :  $\underbrace{n1}_{ligne\ courante} + \underbrace{n1}_{ligne\ précédente} + \underbrace{1}_{indice \ minimum} = O(n1)$
+    \end{itemize}
+    ~\\
+    Ce qui donne un coût de $\fbox{O(c1 + c2 + n1)}$
 
   \subsection{Nombre de défauts de cache sur le modèle CO\,: }
-    \paragraph{Justification\,: }
-
-
+    Pour simplifier les choses, nous pouvons considérer que nos valeurs sont stockées dans un grand tableau, de taille $2 \times n1 + 1$.\\
+    A l'itération i, le programme a besoin de quatres cases en mémoire :
+    \begin{itemize}
+    \item $(i-1)$ pour la destruction
+    \item $(i - i_{min})$ pour la multi-destruction, $i_{min}$ étant défini tel que $T[i-i_{min}]$ est le patch de cout minimal.
+    \item $(i - n1)$ pour l'addition
+    \item $(i - n1 - 1)$ pour la substitution et l'identité \\
+    \end{itemize}
+    \ \ \ \ \ \ \ \ 
+    \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
+    	\hline 
+    	
+    	 $i - n1 - 1$ & $i - n1$  &  .. & .. & $i - i_{min}$ & .. & .. & $i - 1$ & $i$ \\
+    	 
+    	\hline
+    \end{tabular}
+	 \\ \\
+	Le nombre de défauts de cache dépend donc de la taille totale Z du cache :\\ \\
+	\textbf{Si $Z > n1$ :} \\
+		 - Un défaut de cache inévitable pour écrire les tranches du tableau dans le cache : $\theta(\dfrac{n1}{L})$ \\
+		 - Pas de défaut de chache pour accéder aux cases mémoires. \\
+		 $\Rightarrow \theta(\dfrac{n1}{L})$ \\ \\ 
+	\textbf{Si $Z < n1$ :} \\
+	- Défaut inévitable : $\theta(\dfrac{n1}{L})$ \\
+	- Défaut à chaque calcul pour retrouver les patchs dans les cases $(i - n1)$ et  $(i - n1 - 1)$ : $\theta(n1)$ \\
+ 	$\Rightarrow \theta(n1 (1 + \dfrac{1}{L}) )$ \\ \\
+ 	\\
+ 	Pour simplifier les calculs, nous avons considéré que l'indice $i_{min}$ est soit proche de $i - n1$, soit proche de $i$. \\
+ 	Avec cette simplification, nous sommes sur d'avoir le patch de cout minimum sur la ligne dans le cache. En effet si la case du patch dans
+ 	le tableau est proche
+ 	de la case courante et donc elle est déjà dans le cache, sinon elle est récupérée avec le cache-miss provoqué par l'accès à l'indice
+ 	$i - n1$.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Compte rendu d'expérimentation (2 points)}
   \subsection{Conditions expérimentaless}
