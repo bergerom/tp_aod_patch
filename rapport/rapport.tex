@@ -114,9 +114,9 @@ nous permet d'avoir un cout mémoire moindre.
  	$\Rightarrow \theta(n1 (1 + \dfrac{1}{L}) )$ \\ \\
  	\\
  	Pour simplifier les calculs, nous avons considéré que l'indice $i_{min}$ est soit proche de $i - n1$, soit proche de $i$. \\
- 	Avec cette simplification, nous sommes sur d'avoir le patch de cout minimum sur la ligne dans le cache. En effet si la case du patch dans
+ 	Avec cette simplification, nous sommes sûr d'avoir le patch de cout minimum sur la ligne dans le cache. En effet si la case du patch dans
  	le tableau est proche
- 	de la case courante et donc elle est déjà dans le cache, sinon elle est récupérée avec le cache-miss provoqué par l'accès à l'indice
+ 	de la case courante,  elle est déjà dans le cache.Sinon, elle est récupérée avec le cache-miss provoqué par l'accès à l'indice
  	$i - n1$.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Compte rendu d'expérimentation (2 points)}
