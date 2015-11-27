@@ -1,4 +1,5 @@
 \documentclass[a4paper, 10pt, french]{article}
+\usepackage{mathtools}
 % Préambule; packages qui peuvent être utiles
    \RequirePackage[T1]{fontenc}        % Ce package pourrit les pdf...
    \RequirePackage{babel,indentfirst}  % Pour les césures correctes,
@@ -99,7 +100,7 @@ ce minimum, que nous mettons à jour à chaque nouveau patch calculé.
 \section{Analyse du coût théorique}
 
   \subsection{Nombre  d'opérations en pire cas\,:}
-    En reprenant les notations de la partie précédente :
+    En reprenant les notations de la partie précédente : \\ \\
 
     \[T(n_1,n_2,c_1,c_2) = \underbrace{Coût(\text{Cas triviaux})}_{\cplx{n_2}} +
     \underbrace{Coût(\text{Initialisations})}_{\cplx{n_1+n_2}} +
@@ -109,6 +110,7 @@ ce minimum, que nous mettons à jour à chaque nouveau patch calculé.
 	\[T(n_1,n_2,c_1,c_2) = n_1 \times n_2 \times Coût(\text{Calcul patch (i,j)})\]
 
 	Nous devons donc calculer le coût du calcul du patch (i,j), c'est le coût de la fonction \emph{compute\_at\_indexes(index\_in,index\_out)}.
+
 	Décomposons les coûts internes à cette fonction dans le pire cas :
 	\begin{itemize}
 	\item Une comparaison de chaîne de caractère a un coût de $\cplx{\max(l_i,l_j)}$ en notant $l_i$ (resp. $l_j$) la longueur de la ligne de $i$ (resp $j$).
@@ -258,11 +260,33 @@ On remarque que lorsque la taille des fichiers double, le temps d'exécution est
 multiplié par légèrement plus de quatre. Nous avions calculés un coût quadratique
 pour notre algorithme, ces résultats sont donc cohérents avec notre analyse.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Question\,: et  si le coût d'un patch était sa taille en octets ?}
-{\em Préciser le principe de la résolution choisie (parmi celles vues en cours); donner  les modifications à apporter (soit à vos  équations, soit à votre programme, au choix)
-pour s'adapter à cette nouvelle fonction de coût.
-}
 
+Dans ce cas, les coûts des opérations sont redéfinis: \\ \\
+Nous noterons $F_i[n]$, avec $n \in [1, \ell_i]$, pour dénoter la $n$-ème ligne du fichier
+$F_i$. Nous noterons $\abs{F_i[n]}$ la longueur de cette ligne. \\
+On note N le nombre de lignes à détruire pour la destruction multiple. \\
+On suppose aussi que la taille d'un caractère est d'un octet. \\ \\
+\begin{tabular}{|c|c|c|c|c|}
+    	\hline
+    	 Ajout & Substitution & Destruction Simple & Destruction Multiple \\
+    	 \hline
+    	 $4 + \lceil{}log_{10} n_1\rceil{} + \abs{F_2[n_2]}$ & $4 + \lceil{}log_{10} n_1\rceil{} + \abs{F_2[n_2]}$ &  $4 + \lceil{}log_{10} n_1\rceil{}$&  $5 +  \lceil{}log_{10} n_1\rceil{} + \lceil{}log_{10} N\rceil{}$    \\
+    	\hline
+    \end{tabular}
+    \\ \\
+    On arrive finalement à l'équation de bellman suivante :
+\[
+    cout(n_1, n_2) = \min
+    \begin{cases}
+        cout(n_1-1, n_2-1)                          & \text{si } F_1[n_1] = F_2[n_2]\\
+        cout(n_1-1, n_2-1) + 4 + \lceil{}log_{10} n_1\rceil{} + \abs{F_2[n_2]}   & \text{(substitution)}\\
+        cout(n_1-1, n_2) + 4 + \lceil{}log_{10} n_1\rceil{}                       & \text{(destruction)}\\
+        \min_{i \in [2, n_1]} cout(n_1-i, n_2) + 5 +  \lceil{}log_{10} n_1\rceil{} + \lceil{}log_{10} N\rceil{}       \\  \ \ \text{avec} \  \ N = n2 - \text{arg}\min_{i \in [2, n_1]}cout(n_1-i, n_2) & \text{(destruction multiple)}\\
+        cout(n_1, n_2-1) + 4 + \lceil{}log_{10} n_1\rceil{} + \abs{F_2[n_2]}      & \text{(ajout)}
+    \end{cases}
+\]
+
+Notons qu'il serait astucieux de ne pas utiliser la fonction logarithme dans notre l'implémentation, mais
+plutot utiliser un algorithme qui permettant de calculer la "taille" d'un nombre en décimal.
 \end{document}
-%% Fin mise au format
