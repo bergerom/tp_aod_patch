@@ -51,7 +51,7 @@ class TestGeneralComputePatch(unittest.TestCase):
         for i in range(begin, end):
             f_out[i] = f_out[i] + '@'
         patch = TabPatch(f_in, f_out).compute_patch_opt()
-        atoms = [atom for atom in patch.atom_list if not isinstance(atom, IdentityAtom)]
+        atoms = patch.atom_list
         self.assertEqual(end-begin, len(atoms))
         for i in range(begin, end):
             self.assertIn(SubstituteAtom(i+1, f_out[i]), atoms) # ligne=i+1 car on indice les lignes à partir de 1 dans l'algorithme
@@ -63,7 +63,7 @@ class TestGeneralComputePatch(unittest.TestCase):
         size = random.randint(0, 10)
         f_out[position:position] = ['@']*size
         patch = TabPatch(f_in, f_out).compute_patch_opt()
-        atoms = [atom for atom in patch.atom_list if not isinstance(atom, IdentityAtom)]
+        atoms = patch.atom_list
         self.assertEqual(size, len(atoms))
         for i in range(position, position+size):
             self.assertIn(AdditionAtom(position, f_out[i]), atoms)
@@ -74,7 +74,7 @@ class TestGeneralComputePatch(unittest.TestCase):
         begin = random.randint(len(f_out)//4, 3*len(f_out)//4)
         f_out[begin:begin+1] = []
         patch = TabPatch(f_in, f_out).compute_patch_opt()
-        atoms = [atom for atom in patch.atom_list if not isinstance(atom, IdentityAtom)]
+        atoms = patch.atom_list
         self.assertEqual(1, len(atoms))
         self.assertEqual(DestructionAtom(begin+1), atoms[0])
 
@@ -85,6 +85,6 @@ class TestGeneralComputePatch(unittest.TestCase):
         end = random.randint(begin+2, 3*len(f_out)//4)
         f_out[begin:end] = []
         patch = TabPatch(f_in, f_out).compute_patch_opt()
-        atoms = [atom for atom in patch.atom_list if not isinstance(atom, IdentityAtom)]
+        atoms = patch.atom_list
         self.assertEqual(1, len(atoms))
         self.assertEqual(DestructionMultAtom(begin+1, end-begin), atoms[0])

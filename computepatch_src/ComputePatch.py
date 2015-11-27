@@ -79,7 +79,7 @@ class TabPatch:
             destructionMult_cost = INFINITY
         minimal_cost = min(possible_costs)
         if minimal_cost == identity_cost :
-            self.current_patch[index_in] = Patch(self.previous_patch[index_in-1], IdentityAtom(index_in))
+            self.current_patch[index_in] = self.previous_patch[index_in-1]
         elif minimal_cost == substitute_cost:
             self.current_patch[index_in] = Patch(self.previous_patch[index_in-1], SubstituteAtom(index_in, self.file_out[index_out]))
         elif minimal_cost == addition_cost:

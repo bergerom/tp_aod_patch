@@ -11,7 +11,7 @@ class Patch:
             self.cost = previous_patch.cost + patch_atom.cost
 
     def __str__(self):
-        return "\n".join(str(atom) for atom in self.atom_list if not isinstance(atom, IdentityAtom))
+        return "\n".join(str(atom) for atom in self.atom_list)
 
     def __repr__(self):
         return str(self)

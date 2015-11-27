@@ -14,15 +14,6 @@ class PatchAtom:
 
 # Classes héritant de PatchAtom
 
-class IdentityAtom(PatchAtom):
-    cost = 0
-    def __init__(self, line_nb):
-        super().__init__(line_nb)
-        self.cost = 0
-
-    def __str__(self):
-        return ""
-
 class AdditionAtom(PatchAtom):
     def __init__(self, line_nb, new_line):
         super().__init__(line_nb)
