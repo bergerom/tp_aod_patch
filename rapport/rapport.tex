@@ -16,6 +16,7 @@
 
    \newcommand{\set}[1]{\left\{ #1 \right\}}
    \newcommand{\abs}[1]{\left| #1 \right|}
+   \newcommand{\cplx}[1]{\mathcal O \left( #1 \right)}
 % Fin Préambule; package qui peuvent être utiles
 \usepackage{moreverb}
 \title{Rapport de TP 4MMAOD : Génération de patch optimal}
@@ -31,7 +32,7 @@ Tom Cornebize (ISI2A\_G2)
 \maketitle
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Principe de notre  programme (1 point)}
+\section{Principe de notre  programme}
 
 \subsection{Équation de Bellman}
 
@@ -72,8 +73,8 @@ Voici le pseudo-code de cet algorithme :
 \begin{verbatimtab}
 	Retourner la réponse directement si on est dans un cas trivial
 	Faire les intialisations nécéssaires
-	for(i=1..n2)
-	  for(j=1..n1)
+	for(j=1..n_2)
+	  for(i=1..n_1)
 		Calcul du patch minimum (i,j) -- Avec l'équation de Bellman
 
 	Retourner le dernier résultat du tableau
@@ -95,85 +96,84 @@ Plutôt que de reparcourir le tableau à chaque fois, nous stockons l'indice de
 ce minimum, que nous mettons à jour à chaque nouveau patch calculé.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Analyse du coût théorique (3 points)}
+\section{Analyse du coût théorique}
 
   \subsection{Nombre  d'opérations en pire cas\,:}
     En reprenant les notations de la partie précédente :
 
-    \[T(n1,n2,c1,c2) = \underbrace{Coût(\text{Cas triviaux})}_{O(1)} +
-    \underbrace{Coût(\text{Intialisations})}_{O(n1)} +
-    \sum_{i=1}^{n2} \sum_{i=1}^{n1} Coût((\text{Calcul patch (i,j)})\]
+    \[T(n_1,n_2,c_1,c_2) = \underbrace{Coût(\text{Cas triviaux})}_{\cplx{n_2}} +
+    \underbrace{Coût(\text{Intialisations})}_{\cplx{n_1+n_2}} +
+    \sum_{j=1}^{n_2} \sum_{i=1}^{n_1} Coût((\text{Calcul patch (i,j)})\]
 
 	On néglige donc les deux premiers coûts, ce qui nous donne :
-	\[T(n1,n2,c1,c2) = n1 \times n2 \times Coût(\text{Calcul patch (i,j)})\]
+	\[T(n_1,n_2,c_1,c_2) = n_1 \times n_2 \times Coût(\text{Calcul patch (i,j)})\]
 
 	Nous devons donc calculer le coût du calcul du patch (i,j), c'est le coût de la fonction \emph{compute\_at\_indexes(index\_in,index\_out)}.
 	Décomposons les coûts internes à cette fonction dans le pire cas :
 	\begin{itemize}
-	\item Une comparaison de chaine de caractère $\Rightarrow  O(\max(li,lj))$ en notant li (\textit{resp lj}) la longueur de la ligne de i (\textit{resp j}).
+	\item Une comparaison de chaine de caractère a un coût de $\cplx{\max(l_i,l_j)}$ en notant $l_i$ (resp. $l_j$) la longueur de la ligne de $i$ (resp $j$).
 	\item Un cout constant pour le reste des opérations
 	\end{itemize}
 
-	On en déduit que le cout au pire cas de cette fonction vaut : $\max(li,lj)$ (les autres coûts étant constants)
+	On en déduit que le cout au pire cas de cette fonction vaut : $\cplx{\max(l_i,l_j)}$ (les autres coûts étant constants).
 
-	\[T(n1,n2,c1,c2) = \sum_{i=1}^{n2} \sum_{i=1}^{n1} \max(li,lj) \leq n1 \times n2 \times L \ \ \text{avec } L = \max(c1,c2)\]
+	\[T(n_1,n_2,c_1,c_2) = \sum_{j=1}^{n_2} \sum_{i=1}^{n_1} \max(li,lj) \leq n_1 \times n_2 \times L \ \ \text{avec } L = \max(c_1,c_2)\]
 
-	 \ \ \ $\text{Finalement, } T(n1,n2,c1,c2) = O(n1 \times n2 \times L)\ \ \text{avec } L = \max(c1,c2) $
+	Finalement, $T(n_1,n_2,c_1,c_2) = \cplx{(n_1 \times n_2 \times L)}$ avec $L$ la longueur de la plus grande chaîne.
 
   \subsection{Place mémoire requise\,: }
 	Nous utilisons deux listes pous stocker les informations nécéssaire au calcul du coût courant : une pour la ligne courante, l'autre pour la ligne
     précédente. Le patch de cout minimum sur une ligne est stocké avec son indice.
     Le cout total en mémoire doit donc prendre en compte :
     \begin{itemize}
-    \item Le coût du stockage des fichiers en entrée : \ $O(c1 + c2)$
-    \item Le coût des mémorisations :  $\underbrace{n1}_{ligne\ courante} + \underbrace{n1}_{ligne\ précédente} + \underbrace{1}_{indice \ minimum} = O(n1)$
+    \item Le coût du stockage des fichiers en entrée : \ $O(c_1 + c_2)$
+    \item Le coût des mémorisations :  $\underbrace{n_1}_{ligne\ courante} + \underbrace{n_1}_{ligne\ précédente} + \underbrace{1}_{indice \ minimum} = O(n_1)$
     \end{itemize}
 
-    Ce qui donne un coût de $\fbox{O(c1 + c2 + n1)}$
+    Ce qui donne un coût de $\cplx{c_1 + c_2 + n_1}$
 
   \subsection{Nombre de défauts de cache sur le modèle CO\,: }
-    Pour simplifier les choses, nous pouvons considérer que nos valeurs sont stockées dans un grand tableau, de taille $2 \times n1 + 1$.\\
+    Pour simplifier les choses, nous pouvons considérer que nos valeurs sont stockées dans un grand tableau, de taille $2 \times n_1 + 1$.\\
     A l'itération i, le programme a besoin de quatres cases en mémoire :
     \begin{itemize}
     \item $(i-1)$ pour la destruction
     \item $(i - i_{min})$ pour la multi-destruction, $i_{min}$ étant défini tel que $T[i-i_{min}]$ est le patch de cout minimal.
-    \item $(i - n1)$ pour l'addition
-    \item $(i - n1 - 1)$ pour la substitution et l'identité
+    \item $(i - n_1)$ pour l'addition
+    \item $(i - n_1 - 1)$ pour la substitution et l'identité
     \end{itemize}
 
     \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
     	\hline
 
-    	 $i - n1 - 1$ & $i - n1$  &  .. & .. & $i - i_{min}$ & .. & .. & $i - 1$ & $i$ \\
+    	 $i - n_1 - 1$ & $i - n_1$  &  .. & .. & $i - i_{min}$ & .. & .. & $i - 1$ & $i$ \\
 
     	\hline
     \end{tabular}
 
 	Le nombre de défauts de cache dépend donc de la taille totale Z du cache :
 
-	\textbf{Si $Z > n1$ :}
+	\textbf{Si $Z > n_1$ :}
     \begin{itemize}
-		 \item Un défaut de cache inévitable pour écrire les tranches du tableau dans le cache : $\theta(\dfrac{n1}{L})$
-		 \item Pas de défaut de chache pour accéder aux cases mémoires.
-		 $\Rightarrow \theta(\dfrac{n1}{L})$
+		 \item Un défaut de cache inévitable pour écrire les tranches du tableau dans le cache : $\Theta(\dfrac{n_1}{L})$
+		 \item Pas de défaut de chache pour accéder aux cases mémoires : $\Theta(\dfrac{n_1}{L})$
      \end{itemize}
 
-	\textbf{Si $Z < n1$ :}
+	\textbf{Si $Z < n_1$ :}
     \begin{itemize}
-	    \item Défaut inévitable : $\theta(\dfrac{n1}{L})$
-	    \item Défaut à chaque calcul pour retrouver les patchs dans les cases $(i - n1)$ et  $(i - n1 - 1)$ : $\theta(n1)$
+	    \item Défaut inévitable : $\Theta(\dfrac{n_1}{L})$
+	    \item Défaut à chaque calcul pour retrouver les patchs dans les cases $(i - n_1)$ et  $(i - n_1 - 1)$ : $\Theta(n_1)$
     \end{itemize}
 
- 	$\Rightarrow \theta(n1 (1 + \dfrac{1}{L}) )$
- 	Pour simplifier les calculs, nous avons considéré que l'indice $i_{min}$ est soit proche de $i - n1$, soit proche de $i$.
+ 	$\Rightarrow \Theta(n_1 (1 + \dfrac{1}{L}) )$
+ 	Pour simplifier les calculs, nous avons considéré que l'indice $i_{min}$ est soit proche de $i - n_1$, soit proche de $i$.
 
  	Avec cette simplification, nous sommes sûr d'avoir le patch de cout minimum sur la ligne dans le cache. En effet si la case du patch dans
  	le tableau est proche
  	de la case courante,  elle est déjà dans le cache.Sinon, elle est récupérée avec le cache-miss provoqué par l'accès à l'indice
- 	$i - n1$.
+ 	$i - n_1$.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Compte rendu d'expérimentation (2 points)}
+\section{Compte rendu d'expérimentation}
   \subsection{Conditions expérimentaless}
     Notre programme est malheureusement trop lent pour fonctionner sur les benchmark fournis.
     Nous avons pourtant un algorithme qui a une complexité temporelle quadratique
@@ -256,7 +256,7 @@ multiplié par légèrement plus de quatre. Nous avions calculés un coût quadr
 pour notre algorithme, ces résultats sont donc cohérents avec notre analyse.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Question\,: et  si le coût d'un patch était sa taille en octets ? (1 point)}
+\section{Question\,: et  si le coût d'un patch était sa taille en octets ?}
 {\em Préciser le principe de la résolution choisie (parmi celles vues en cours); donner  les modifications à apporter (soit à vos  équations, soit à votre programme, au choix)
 pour s'adapter à cette nouvelle fonction de coût.
 }
