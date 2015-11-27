@@ -24,4 +24,4 @@ class TestPatch(unittest.TestCase):
             line_nb += random.randint(1, 10)
             atoms.append(atom)
             patch = Patch(patch, atom)
-        self.assertEqual(sum(atom.compute_cost() for atom in atoms), patch.cost)
+        self.assertEqual(sum(atom.cost for atom in atoms), patch.cost)

@@ -8,7 +8,7 @@ class Patch:
         self.previous_patch = previous_patch
         if previous_patch is not None:
             assert patch_atom is not None
-            self.cost = previous_patch.cost + patch_atom.compute_cost()
+            self.cost = previous_patch.cost + patch_atom.cost
 
     def __str__(self):
         return "\n".join(str(atom) for atom in self.atom_list if not isinstance(atom, IdentityAtom))

@@ -55,15 +55,33 @@ class TabPatch:
         return patch
 
     def compute_at_indexes(self, index_in, index_out):
-        possible_patches = []
+        possible_costs = []
         if self.file_in[index_in] == self.file_out[index_out]:
-            possible_patches.append(Patch(self.previous_patch[index_in-1], IdentityAtom(index_in)))
-        possible_patches.append(Patch(self.previous_patch[index_in-1], SubstituteAtom(index_in, self.file_out[index_out])))
-        possible_patches.append(Patch(self.previous_patch[index_in], AdditionAtom(index_in, self.file_out[index_out])))
-        possible_patches.append(Patch(self.current_patch[index_in-1], DestructionAtom(index_in)))
+            identity_cost = self.previous_patch[index_in-1].cost
+            possible_costs.append(identity_cost)
+        else:
+            identity_cost = INFINITY
+        substitute_cost = self.previous_patch[index_in-1].cost + SubstituteAtom.compute_cost(self.file_out[index_out])
+        possible_costs.append(substitute_cost)
+        addition_cost = self.previous_patch[index_in].cost + AdditionAtom.compute_cost(self.file_out[index_out])
+        possible_costs.append(addition_cost)
+        destruction_cost = self.current_patch[index_in-1].cost + DestructionAtom.compute_cost()
+        possible_costs.append(destruction_cost)
         size = index_in - self.min_current_index
-        possible_patches.append(Patch(self.current_patch[self.min_current_index], DestructionMultAtom(self.min_current_index+1, size)))
-        self.current_patch[index_in] = min(possible_patches)
+        destructionMult_cost = self.current_patch[self.min_current_index].cost + DestructionMultAtom.compute_cost()
+        possible_costs.append(destructionMult_cost)
+        minimal_cost = min(possible_costs)
+        if minimal_cost == identity_cost :
+            self.current_patch[index_in] = Patch(self.previous_patch[index_in-1], IdentityAtom(index_in))
+        elif minimal_cost == substitute_cost:
+            self.current_patch[index_in] = Patch(self.previous_patch[index_in-1], SubstituteAtom(index_in, self.file_out[index_out]))
+        elif minimal_cost == addition_cost:
+            self.current_patch[index_in] = Patch(self.previous_patch[index_in], AdditionAtom(index_in, self.file_out[index_out]))
+        elif minimal_cost == destruction_cost:
+            self.current_patch[index_in] = Patch(self.current_patch[index_in-1], DestructionAtom(index_in))
+        else:
+            assert minimal_cost == destructionMult_cost
+            self.current_patch[index_in] = Patch(self.current_patch[self.min_current_index], DestructionMultAtom(self.min_current_index+1, size))
         if(self.current_patch[index_in] < self.current_patch[self.min_current_index]):
             self.min_current_index = index_in
 

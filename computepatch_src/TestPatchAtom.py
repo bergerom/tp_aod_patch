@@ -6,7 +6,7 @@ from Patch import *
 class TestPatchAtom(unittest.TestCase):
 
     def verify_patch(self, atom, expected_cost, expected_line_number):
-        self.assertEqual(expected_cost, atom.compute_cost())
+        self.assertEqual(expected_cost, atom.cost)
         self.assertEqual(expected_line_number, atom.line_number)
 
     def test_patch_AdditionAtom(self):
