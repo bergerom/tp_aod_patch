@@ -22,7 +22,7 @@ class TabPatch:
         self.current_patch[0] = Patch(Patch(), AdditionAtom(0, self.file_out[1]))
         self.previous_patch[0] = Patch()
         self.previous_patch[1] = Patch(self.previous_patch[0], DestructionAtom(1))
-        for i in range(1, len(self.file_in)):
+        for i in range(2, len(self.file_in)):
             self.previous_patch[i] = Patch(self.previous_patch[0], DestructionMultAtom(1, i))
 
     def compute_patch_opt(self):
@@ -71,8 +71,8 @@ class TabPatch:
         possible_costs.append(addition_cost)
         destruction_cost = self.current_patch[index_in-1].cost + 10
         possible_costs.append(destruction_cost)
-        size = index_in - self.min_current_index
         if self.min_current_index < index_in-1:
+            size = index_in - self.min_current_index
             destructionMult_cost = self.current_patch[self.min_current_index].cost + 15
             possible_costs.append(destructionMult_cost)
         else:
@@ -93,16 +93,19 @@ class TabPatch:
             self.min_current_index = index_in
 
 def help() :
-    print('Syntax: %s <source file> <target file>' % sys.argv[0])
+    print('Syntax: %s <source file> <target file> [-c]' % sys.argv[0])
     sys.exit(1)
 
 if __name__ == '__main__':
-    if len(sys.argv) != 3:
+    if len(sys.argv) < 3 or len(sys.argv) > 4:
+        help()
+    if(len(sys.argv) == 4 and sys.argv[3] != '-c'):
         help()
     with open(sys.argv[1]) as f:
         file_in = f.readlines()
     with open(sys.argv[2]) as f:
         file_out = f.readlines()
     patch = TabPatch(file_in, file_out).compute_patch_opt()
-    print("%d" % patch.cost, file=sys.stderr)
+    if len(sys.argv) == 4:
+        print("%d" % patch.cost, file=sys.stderr)
     print(patch)
