@@ -55,21 +55,28 @@ class TabPatch:
         return patch
 
     def compute_at_indexes(self, index_in, index_out):
+        '''
+            Méthode moche, avec beaucoup de valeurs codées en dur (ce qui a permis
+            de diviser son temps d'exécution par 2).
+        '''
         possible_costs = []
         if self.file_in[index_in] == self.file_out[index_out]:
             identity_cost = self.previous_patch[index_in-1].cost
             possible_costs.append(identity_cost)
         else:
             identity_cost = INFINITY
-        substitute_cost = self.previous_patch[index_in-1].cost + SubstituteAtom.compute_cost(self.file_out[index_out])
+        substitute_cost = self.previous_patch[index_in-1].cost + 10 + len(self.file_out[index_out])
         possible_costs.append(substitute_cost)
-        addition_cost = self.previous_patch[index_in].cost + AdditionAtom.compute_cost(self.file_out[index_out])
+        addition_cost = self.previous_patch[index_in].cost + 10 + len(self.file_out[index_out])
         possible_costs.append(addition_cost)
-        destruction_cost = self.current_patch[index_in-1].cost + DestructionAtom.compute_cost()
+        destruction_cost = self.current_patch[index_in-1].cost + 10
         possible_costs.append(destruction_cost)
         size = index_in - self.min_current_index
-        destructionMult_cost = self.current_patch[self.min_current_index].cost + DestructionMultAtom.compute_cost()
-        possible_costs.append(destructionMult_cost)
+        if self.min_current_index < index_in-1:
+            destructionMult_cost = self.current_patch[self.min_current_index].cost + 15
+            possible_costs.append(destructionMult_cost)
+        else:
+            destructionMult_cost = INFINITY
         minimal_cost = min(possible_costs)
         if minimal_cost == identity_cost :
             self.current_patch[index_in] = Patch(self.previous_patch[index_in-1], IdentityAtom(index_in))
