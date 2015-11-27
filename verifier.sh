@@ -8,7 +8,7 @@ if [ $# -ne 2 ] ; then
     exit 1
 fi
 
-./computepatch_src/ComputePatch.py $1 $2 1> $PATCH_LOCATION
+./computepatch_src/ComputePatch.py $1 $2 -c 1> $PATCH_LOCATION
 if [ $? -ne 0 ] ; then
     echo "Error with computePatch."
     exit 1
