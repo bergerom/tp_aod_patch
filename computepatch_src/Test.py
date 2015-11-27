@@ -3,7 +3,7 @@
 import unittest
 from TestPatch import *
 from TestPatchAtom import *
-from TestComputePatchOpt import *
+from TestComputePatch import *
 
 if __name__ == '__main__':
     unittest.main()
