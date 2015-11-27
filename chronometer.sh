@@ -18,7 +18,7 @@ if [ $? -ne 0 ] ; then
     exit 1
 fi
 
-time ./computepatch_src/ComputePatch.py $FILE_IN $FILE_OUT > /dev/null
+time ./src/ComputePatch.py $FILE_IN $FILE_OUT > /dev/null
 if [ $? -ne 0 ] ; then
     echo "Error with computePatch."
     exit 1

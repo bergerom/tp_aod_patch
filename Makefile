@@ -28,6 +28,8 @@ $(DOCDIR)/index.html: $(SRCDIR)/Doxyfile $(CSOURCE)
 	$(DOCC) $(SRCDIR)/Doxyfile
 
 binary: $(BINDIR)/applyPatch
+	cp -rf src/* bin
+	mv bin/ComputePatch.py bin/computePatchOpt
 
 report: $(PDF)
 

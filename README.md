@@ -11,12 +11,12 @@ du dossier du projet.
 
 Un patch pour deux fichiers f_in et f_out peut être généré avec la commande suivante.
 
-    ./computepatch_src/ComputePatch.py f_in f_out
+    ./src/ComputePatch.py f_in f_out
 
 
 On peut également afficher le coût de ce patch (sur stderr) avec la commande suivante.
 
-    ./computepatch_src/ComputePatch.py f_in f_out -c
+    ./src/ComputePatch.py f_in f_out -c
 
 
 ## Outils annexes
@@ -24,7 +24,7 @@ On peut également afficher le coût de ce patch (sur stderr) avec la commande s
 Des tests unitaires accompagnent ce programme. Pour les exécuter, utiliser la commande
 suivante.
 
-    ./computepatch_src/Test.py
+    ./src/Test.py
 
 Un programme de génération de fichiers de test est également présent. Il prend en
 entrée une taille de fichier, génère aléatoirement un fichier f_in de cette taille,
