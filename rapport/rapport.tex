@@ -164,59 +164,85 @@ Pour simplifier les choses, nous pouvons considérer que nos valeurs sont stock�
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Compte rendu d'expérimentation (2 points)}
   \subsection{Conditions expérimentaless}
-     {\em Décrire les conditions permettant la reproductibilité des mesures: on demande la description
-      de la machine et la méthode utilisée pour mesurer le temps.
-     }
+    Notre programme est malheureusement trop lent pour fonctionner sur les benchmark fournis.
+    Nous avons pourtant un algorithme qui a une complexité temporelle quadratique
+    en la taille des données et une complexité spatiale linéaire en la taille des données,
+    ce qui nous semble optimal.
+
+    Nous suspectons que cette lenteur est due à l'utilisation de Python.
+
+    Nous présentons tout de même des résultats expérimentaux dans cette partie,
+    qui ont été réalisés sur des fichiers de tailles réduites.
 
     \subsubsection{Description synthétique de la machine\,:}
-      {\em indiquer ici le  processeur et sa fréquence, la mémoire, le système d'exploitation.
-       Préciser aussi si la machine était monopolisée pour un test, ou notamment si
-       d'autres processus ou utilisateurs étaient en cours d'exécution.
-      }
+      Les tests ont été réalisés sur une machine dotée de 16GB de mémoire vive et
+      d'un processeur \emph{I7 5600U} : cache de 4MB, deux coeurs physiques avec
+      chacun deux coeurs logiques (technologie Hyper-Threading d'Intel), fréquence
+      de 2.6 GHz à 3.2 GHz.
+      Le système d'exploitation était \emph{Linux Mint Debian Edition 2}, version 64 bits.
+      D'autres processus étaient en cours d'exécution mais ne necessitaient pas
+      d'important coûts de calculs.
 
     \subsubsection{Méthode utilisée pour les mesures de temps\,: }
-      {\em préciser ici  comment les mesures de temps ont été effectuées (fonction appelée) et l'unité de temps; en particulier,
-       préciser comment les 5 exécutions pour chaque test ont été faites (par exemple si le même test est fait 5 fois de suite, ou si les tests sont alternés entre
-       les mesures, ou exécutés en concurrence etc).
-      }
+      Les mesures de temps ont été effectuées via la commande \emph{time} de Linux.
+      Les temps relevés correspondent au temps \emph{real} renvoyé par cette commande,
+      afin de prendre en compte le temps passé en mode noyau ou bloqué sur une
+      entrée-sortie.
+      L'unité de temps est la seconde.
+      Les tests ont étés réalisés avec le script \emph{chronometer.sh} accompagnant
+      notre programme. À chaque fois, ce script génère un fichier aléatoirement et
+      du nombre de lignes souhaités. Puis, il génère un second fichier en copiant
+      le premier et en y apportant des modifications, telles que des substitutions,
+      additions ou destructions. Ensuite, le script génère un patch en utilisant
+      notre programme. Seul le temps de calcul du patch est mesuré ici.
+      Pour chaque test, un nouveau fichier est généré : il n'y a donc pas d'effet
+      de cache.
 
   \subsection{Mesures expérimentales}
-    {\em Compléter le tableau suivant par les temps d'exécution mesurés pour chacun des 6 benchmarks imposés
-              (temps minimum, maximum et moyen sur 5 exécutions)
-    }
+    Comme mentionné précédemment, les tests n'ont malheureusement pas pu êre réalisés
+    sur les fichiers fournis.
+    Nous présentons ici les résultats de nos expériences, menées sur des fichiers
+    générés automatiquement.
+
+    Les coûts des patchs calculés n'étant pas pertinent ici (les fichiers étant
+    générés aléatoirement), ils ne seront pas présentés.
+
+    Tous les temps présentés sont exprimés en secondes. Les tailles de fichiers
+    sont exprimées en nombre de lignes. Nous rappelons que cette taille est exacte
+    pour le fichier d'entrée, mais est une approximation pour le fichier de sortie
+    (sa taille pouvant différer du fichier d'entrée à cause d'additions ou destructions).
+    En pratique, cette différence reste raisonnable.
 
     \begin{figure}[h]
       \begin{center}
-        \begin{tabular}{|l||r||r|r|r||}
+        \begin{tabular}{|l||r|r|r||}
           \hline
           \hline
-            & coût         & temps     & temps   & temps \\
-            & du patch     & min       & max     & moyen \\
+            taille des &   temps     & temps   & temps \\
+            fichiers &   min       & max     & moyen \\
           \hline
           \hline
-            benchmark1 &      &     &     &     \\
+            200 &  0.22      &   0.24  &  0.23   \\
           \hline
-            benchmark2 &      &     &     &     \\
+            500 &  1.01      &   1.04  &  1.023   \\
           \hline
-            benchmark3 &      &     &     &     \\
+            1000 &   4.41     &  4.78   &  4.59   \\
           \hline
-            benchmark4 &      &     &     &     \\
+            2000 & 20.11   &  21.00   &  21.08   \\
           \hline
-            benchmark5 &      &     &     &     \\
-          \hline
-            benchmark6 &      &     &     &     \\
+            4000 & 88.82  &    92.26   &  90.84  \\
           \hline
           \hline
         \end{tabular}
-        \caption{Mesures des temps minimum, maximum et moyen de 5 exécutions pour les 6 benchmarks.}
+        \caption{Mesures des temps minimum, maximum et moyen de 5 exécutions pour différentes tailles de fichiers.}
         \label{table-temps}
       \end{center}
     \end{figure}
 
 \subsection{Analyse des résultats expérimentaux}
-{\em Donner  une réponse justifiée  à la question\,:
-              les  temps mesurés correspondent ils  à votre analyse théorique (nombre d’opérations et défauts de cache) ?
-}
+On remarque que lorsque la taille des fichiers double, le temps d'exécution est
+multiplié par légèrement plus de quatre. Nous avions calculés un coût quadratique
+pour notre algorithme, ces résultats sont donc cohérents avec notre analyse.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Question\,: et  si le coût d'un patch était sa taille en octets ? (1 point)}
